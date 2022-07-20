@@ -2,6 +2,8 @@
 
 Use this project as a base for new Outer Wilds translation mods.
 
+Based on [Outer Wilds Korean Translation](https://outerwildsmods.com/mods/outerwildskoreantranslation/) and [Outer Wilds Traditional Chinese Translation](https://outerwildsmods.com/mods/outerwildstraditionalchinesetranslation/).
+
 ## Getting started
 
 - Open up the following files in a text editor (I recommend Notepad++ for its easy find and replace tool):
@@ -31,7 +33,7 @@ For example, the first entry in the default `Translations.xml` looks like this:
 
 ![First entry with key and value both in English](https://user-images.githubusercontent.com/22628069/180037353-1dbff04c-faa9-4dba-9d08-083c75071e0d.png)
 
-In [shippy's Czech translation mod](https://github.com/shippy/outer-wilds-czech) the first entry looks like this:
+In [shippy's Czech translation mod](https://outerwildsmods.com/mods/czechlocalization/) the first entry looks like this:
 
 ![First entry with key in English and value in Czech](https://user-images.githubusercontent.com/22628069/180037136-7cb78de8-2a9b-420e-acec-702633f5fbdc.png)
 
