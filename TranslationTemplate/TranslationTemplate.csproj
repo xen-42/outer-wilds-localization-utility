@@ -12,6 +12,7 @@
     <DebugType>none</DebugType>
   </PropertyGroup>
   <ItemGroup>
+	<PackageReference Include="HarmonyX" Version="2.10.0" />
     <PackageReference Include="OWML" Version="2.3.2" />
     <PackageReference Include="OuterWildsGameLibs" Version="1.1.12.168" />
   </ItemGroup>
@@ -24,6 +25,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ModTemplate.csproj.user" />
+    <Content Include="TranslationTemplate.csproj.user" />
   </ItemGroup>
+	<ItemGroup>
+	  <None Update="Translations.xml">
+		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
 </Project>
