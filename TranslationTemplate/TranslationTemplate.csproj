@@ -23,13 +23,11 @@
     <None Include="manifest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+	  <None Include="assets/*">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="TranslationTemplate.csproj.user" />
   </ItemGroup>
-	<ItemGroup>
-	  <None Update="Translations.xml">
-		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	</ItemGroup>
 </Project>

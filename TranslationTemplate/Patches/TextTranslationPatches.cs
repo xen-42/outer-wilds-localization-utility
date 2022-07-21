@@ -12,11 +12,14 @@ namespace TranslationTemplate
         [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation.SetLanguage))]
         public static bool TextTranslation_SetLanguage(TextTranslation.Language lang, TextTranslation __instance)
         {
-            // We're just going to replace English for now
-            if (lang != TextTranslation.Language.ENGLISH) return true;
+            TranslationTemplate.currentLanguage = lang;
 
-            __instance.m_language = lang;
-            var path = TranslationTemplate.Instance.ModHelper.Manifest.ModFolderPath + "/" + TranslationTemplate.translationFile;
+            if (!TranslationTemplate.IsCustomLanguage(lang)) return true;
+
+            // We can only actually tell the game to use it if its real i.e. less than 12
+            __instance.m_language = (int)lang < 12 ? lang : TextTranslation.Language.ENGLISH;
+
+            var path = TranslationTemplate.GetLanguage().TranslationPath;
             TranslationTemplate.WriteLine($"Loading translation from {path}");
 
             try
