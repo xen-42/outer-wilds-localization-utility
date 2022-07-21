@@ -3,11 +3,7 @@ using OWML.Common;
 using OWML.ModHelper;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using TranslationTemplate.Components;
-using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace TranslationTemplate
 {
@@ -15,32 +11,32 @@ namespace TranslationTemplate
     {
         public static TranslationTemplate Instance;
 
-        public static TextTranslation.Language currentLanguage = TextTranslation.Language.UNKNOWN;
+        public static TextTranslation.Language languageToReplace = TextTranslation.Language.ENGLISH;
 
-        private Dictionary<TextTranslation.Language, CustomLanguage> _customLanguages = new();
+        private Dictionary<string, CustomLanguage> _customLanguages = new();
+        private string currentLanguage = "عربى";
 
-        public static bool IsCustomLanguage(TextTranslation.Language language)
+        public CustomLanguage GetLanguage()
         {
-            return language > TextTranslation.Language.TURKISH;
+            return _customLanguages[currentLanguage];
         }
 
-        public static CustomLanguage GetLanguage(TextTranslation.Language lang)
+        public void SetLanguage(string name)
         {
-            if (Instance._customLanguages.TryGetValue(lang, out var customLanguage))
+            currentLanguage = name;
+            TextTranslation.s_theTable.SetLanguage(TextTranslation.Language.ENGLISH);
+        }
+
+        public void RegisterLanguage(ModBehaviour mod, string name, string translationPath, string assetBundlePath = "", string fontPath = "", Func<string, string> fixer = null)
+        {
+            if (string.IsNullOrEmpty(assetBundlePath) || string.IsNullOrEmpty(fontPath))
             {
-                return customLanguage;
+                _customLanguages[name] = new CustomLanguage(name, translationPath, mod);
             }
-            return null;
-        }
-
-        public static CustomLanguage GetLanguage()
-        {
-            return GetLanguage(currentLanguage);
-        }
-
-        public static string[] GetRegisteredLanguages()
-        {
-            return Instance._customLanguages.Values.Select(x => x.Name).ToArray();
+            else
+            {
+                _customLanguages[name] = new CustomLanguage(name, translationPath, assetBundlePath, fontPath, fixer, mod);
+            }
         }
 
         private void Awake()
@@ -52,23 +48,10 @@ namespace TranslationTemplate
         {
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
 
-            ModHelper.Menus.MainMenu.OnInit += InitTitleMenu;
-
             WriteLine($"Translation mod {nameof(TranslationTemplate)} is loaded!");
 
-            var czech = new CustomLanguage("český", "assets/czech.xml", this);
-            _customLanguages.Add((TextTranslation.Language)12, czech);
-        }
-
-        private void OnDestroy()
-        {
-            ModHelper.Menus.MainMenu.OnInit -= InitTitleMenu;
-        }
-
-        public void InitTitleMenu()
-        {
-            var options = GameObject.Find("TitleMenu/OptionsCanvas/OptionsMenu-Panel/OptionsDisplayPanel/TextAudioMenu/Content/UIElement-Language");
-            options.AddComponent<LanguageSelectionFixer>();
+            RegisterLanguage(this, "Czech", "assets/czech.xml", "assets/aileron-black", "Assets/aileron-black.oft");
+            RegisterLanguage(this, "عربى", "assets/Translations.xml", "assets/b_mitra_0", "Assets/B_MITRA_0.TTF", ArabicSupport.ArabicFixer.Fix);
         }
 
         public static void WriteLine(string msg, MessageType type = MessageType.Info)

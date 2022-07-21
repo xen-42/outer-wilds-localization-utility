@@ -8,8 +8,8 @@ namespace TranslationTemplate
     {
         private static bool UsingCustomFont()
         {
-            return TranslationTemplate.IsCustomLanguage(TranslationTemplate.currentLanguage) 
-                && TranslationTemplate.GetLanguage()?.Font != null;
+            if (TextTranslation.s_theTable.m_language != TextTranslation.Language.ENGLISH) return false;
+            return TranslationTemplate.Instance.GetLanguage()?.Font != null;
         }
 
         [HarmonyPrefix]
@@ -18,7 +18,7 @@ namespace TranslationTemplate
         {
             if (!UsingCustomFont()) return true;
 
-            __result = TranslationTemplate.GetLanguage().Font;
+            __result = TranslationTemplate.Instance.GetLanguage().Font;
 
             return false;
         }
@@ -27,17 +27,18 @@ namespace TranslationTemplate
         [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation.IsLanguageLatin))]
         public static bool TextTranslation_IsLanguageLatin(ref bool __result)
         {
+            if (TextTranslation.s_theTable.m_language != TextTranslation.Language.ENGLISH) return true;
+
             if (UsingCustomFont())
             {
                 __result = false;
                 return false;
             }
-            else if (TranslationTemplate.IsCustomLanguage(TranslationTemplate.currentLanguage))
+            else 
             {
                 __result = true;
                 return false;
             }
-            return true;
         }
 
         [HarmonyPostfix]
@@ -55,7 +56,7 @@ namespace TranslationTemplate
         {
             if (!UsingCustomFont()) return true;
 
-            __result = TranslationTemplate.GetLanguage().Font;
+            __result = TranslationTemplate.Instance.GetLanguage().Font;
 
             return false;
         }
@@ -66,9 +67,9 @@ namespace TranslationTemplate
         {
             if (!UsingCustomFont()) return true;
 
-            __instance._fontInUse = TranslationTemplate.GetLanguage().Font;
-            __instance._dynamicFontInUse = TranslationTemplate.GetLanguage().Font;
-            __instance._textField.font = TranslationTemplate.GetLanguage().Font;
+            __instance._fontInUse = TranslationTemplate.Instance.GetLanguage().Font;
+            __instance._dynamicFontInUse = TranslationTemplate.Instance.GetLanguage().Font;
+            __instance._textField.font = TranslationTemplate.Instance.GetLanguage().Font;
 
             return false;
         }
@@ -79,7 +80,7 @@ namespace TranslationTemplate
         {
             if (!UsingCustomFont()) return true;
 
-            __result = TranslationTemplate.GetLanguage().Font;
+            __result = TranslationTemplate.Instance.GetLanguage().Font;
 
             return false;
         }
@@ -90,28 +91,8 @@ namespace TranslationTemplate
         {
             if (!UsingCustomFont()) return true;
 
-            __instance._deathText.font = TranslationTemplate.GetLanguage().Font;
+            __instance._deathText.font = TranslationTemplate.Instance.GetLanguage().Font;
 
-            return false;
-        }
-
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation.GetDefaultFontSpacing))]
-        public static bool TextTranslation_GetDefaultFontSpacing(ref float __result)
-        {
-            if (!UsingCustomFont()) return true;
-
-            __result = TextTranslation.s_theTable.m_defaultSpacing[(int)TextTranslation.Language.ENGLISH];
-            return false;
-        }
-
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation.GetFontSizeModifier))]
-        public static bool TextTranslation_GetFontSizeModifier(ref float __result)
-        {
-            if (!UsingCustomFont()) return true;
-
-            __result = TextTranslation.s_theTable.m_fontSizeModifier[(int)TextTranslation.Language.ENGLISH];
             return false;
         }
     }

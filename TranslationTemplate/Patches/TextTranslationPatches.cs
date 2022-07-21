@@ -12,14 +12,16 @@ namespace TranslationTemplate
         [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation.SetLanguage))]
         public static bool TextTranslation_SetLanguage(TextTranslation.Language lang, TextTranslation __instance)
         {
-            TranslationTemplate.currentLanguage = lang;
+            if (lang > TextTranslation.Language.TURKISH) lang = TextTranslation.Language.ENGLISH;
 
-            if (!TranslationTemplate.IsCustomLanguage(lang)) return true;
+            if (lang != TextTranslation.Language.ENGLISH) return true;
 
-            // We can only actually tell the game to use it if its real i.e. less than 12
-            __instance.m_language = (int)lang < 12 ? lang : TextTranslation.Language.ENGLISH;
+            __instance.m_language = TextTranslation.Language.ENGLISH;
 
-            var path = TranslationTemplate.GetLanguage().TranslationPath;
+            var language = TranslationTemplate.Instance.GetLanguage();
+
+            var path = language.TranslationPath;
+
             TranslationTemplate.WriteLine($"Loading translation from {path}");
 
             try
@@ -35,6 +37,9 @@ namespace TranslationTemplate
                 {
                     var key = node.SelectSingleNode("key").InnerText;
                     var value = node.SelectSingleNode("value").InnerText;
+
+                    if (language.Fixer != null) value = language.Fixer(value);
+
                     translationTable_XML.table.Add(new TextTranslation.TranslationTableEntry(key, value));
                 }
 
@@ -43,6 +48,9 @@ namespace TranslationTemplate
                 {
                     var key = node.SelectSingleNode("key").InnerText;
                     var value = node.SelectSingleNode("value").InnerText;
+
+                    if (language.Fixer != null) value = language.Fixer(value);
+
                     translationTable_XML.table_shipLog.Add(new TextTranslation.TranslationTableEntry(key, value));
                 }
 
@@ -52,6 +60,9 @@ namespace TranslationTemplate
                     // Keys for UI are all ints
                     var key = int.Parse(node.SelectSingleNode("key").InnerText);
                     var value = node.SelectSingleNode("value").InnerText;
+
+                    if (language.Fixer != null) value = language.Fixer(value);
+
                     translationTable_XML.table_ui.Add(new TextTranslation.TranslationTableEntryUI(key, value));
                 }
 
