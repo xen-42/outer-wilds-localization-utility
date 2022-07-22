@@ -37,27 +37,44 @@ namespace LocalizationUtility
             TextTranslation.s_theTable.SetLanguage(TextTranslation.Language.ENGLISH);
         }
 
-        public void RegisterLanguage(ModBehaviour mod, string name, string translationPath, string assetBundlePath = "", string fontPath = "", Func<string, string> fixer = null)
+        public void RegisterLanguage(ModBehaviour mod, string name, string translationPath)
         {
             try
             {
                 WriteLine($"Registering new language {name}");
 
-                if (string.IsNullOrEmpty(assetBundlePath) || string.IsNullOrEmpty(fontPath))
-                {
-                    _customLanguages[name] = new CustomLanguage(name, translationPath, mod);
-                }
-                else
-                {
-                    _customLanguages[name] = new CustomLanguage(name, translationPath, assetBundlePath, fontPath, fixer, mod);
-                }
+                _customLanguages[name] = new CustomLanguage(name, translationPath, mod);
 
                 // For now it only supports one language mod at a time
                 currentLanguage = name;
             }
             catch(Exception ex)
             {
-                WriteError($"Failed to register language. {ex.Message} {ex.StackTrace}");
+                WriteError($"Failed to register language. {ex}");
+            }
+        }
+
+        public void AddLanguageFont(ModBehaviour mod, string name, string assetBundlePath, string fontPath)
+        {
+            try
+            {
+                _customLanguages[name].AddFont(assetBundlePath, fontPath, mod);
+            }
+            catch (Exception ex)
+            {
+                WriteError($"Failed to add font to language. {ex}");
+            }
+        }
+
+        public void AddLanguageFixer(string name, Func<string, string> fixer)
+        {
+            try
+            {
+                _customLanguages[name].AddFixer(fixer);
+            }
+            catch (Exception ex)
+            {
+                WriteError($"Failed to add fixer to language. {ex}");
             }
         }
 
