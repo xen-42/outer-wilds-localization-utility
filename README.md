@@ -1,6 +1,6 @@
 # Outer Wilds Translation Mod Template
 
-Use this project as a base for new Outer Wilds translation mods.
+This project is meant to have common code required for translation mods.
 
 Based on [Outer Wilds Korean Translation](https://outerwildsmods.com/mods/outerwildskoreantranslation/) and [Outer Wilds Traditional Chinese Translation](https://outerwildsmods.com/mods/outerwildstraditionalchinesetranslation/).
 
