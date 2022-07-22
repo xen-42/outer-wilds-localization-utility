@@ -7,13 +7,15 @@ namespace LocalizationUtility
     public class CustomLanguage
     {
         public string Name { get; private set; }
+        public TextTranslation.Language Language { get; private set; }
         public string TranslationPath { get; private set; }
         public Font Font { get; private set; }
         public Func<string, string> Fixer { get; private set; }
 
-        public CustomLanguage(string name, string translationPath, ModBehaviour mod)
+        public CustomLanguage(string name, TextTranslation.Language language, string translationPath, ModBehaviour mod)
         {
             Name = name;
+            Language = language;
             TranslationPath = mod.ModHelper.Manifest.ModFolderPath + translationPath;
         }
 

@@ -1,6 +1,8 @@
 ﻿using HarmonyLib;
 using System;
+using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Xml;
 
 namespace LocalizationUtility
@@ -12,13 +14,18 @@ namespace LocalizationUtility
         [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation.SetLanguage))]
         public static bool TextTranslation_SetLanguage(TextTranslation.Language lang, TextTranslation __instance)
         {
-            if (lang > TextTranslation.Language.TURKISH) lang = TextTranslation.Language.ENGLISH;
+            if (LocalizationUtility.IsVanillaLanguage(lang)) return true;
 
-            if (lang != TextTranslation.Language.ENGLISH) return true;
+            var language = LocalizationUtility.Instance.GetLanguage(lang);
 
-            __instance.m_language = TextTranslation.Language.ENGLISH;
+            if (language == null)
+            {
+                LocalizationUtility.WriteError("Language " + lang + " is null!");
+                return false;
+            }
 
-            var language = LocalizationUtility.Instance.GetLanguage();
+            __instance.m_language = language.Language;
+            __instance.m_table = null;
 
             var path = language.TranslationPath;
 
@@ -27,7 +34,7 @@ namespace LocalizationUtility
             try
             {
                 var xmlDoc = new XmlDocument();
-                xmlDoc.Load(path);
+                xmlDoc.LoadXml(ReadAndRemoveByteOrderMarkFromPath(path));
 
                 var translationTableNode = xmlDoc.SelectSingleNode("TranslationTable_XML");
                 var translationTable_XML = new TextTranslation.TranslationTable_XML();
@@ -77,11 +84,119 @@ namespace LocalizationUtility
             }
             catch (Exception e)
             {
-                LocalizationUtility.WriteError($"Couldn't load translation: {e.Message}{e.StackTrace}");
+                LocalizationUtility.WriteError($"Couldn't load translation for language {language.Name}: {e.Message}{e.StackTrace}");
                 return true;
             }
 
             return false;
+        }
+
+
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation._Translate))]
+        private static bool _Translate(
+            string key,
+            TextTranslation __instance,
+            ref string __result)
+        {
+            if (LocalizationUtility.IsVanillaLanguage(__instance.m_language)) return true;
+
+            if (__instance.m_table == null)
+            {
+                LocalizationUtility.WriteError("TextTranslation not initialized");
+                __result = key;
+                return false;
+            }
+
+            string text = __instance.m_table.Get(key);
+            if (text == null)
+            {
+                LocalizationUtility.WriteError($"String \"{key}\" not found in table for language {LocalizationUtility.Instance.GetLanguage(__instance.m_language).Name}");
+                __result = key;
+                return false;
+            }
+
+            text = text.Replace("\\\\n", "\n");
+
+            __result = text;
+
+            return false;
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation._Translate_ShipLog))]
+        private static bool _Translate_ShipLog(
+            string key,
+            TextTranslation __instance,
+            ref string __result)
+        {
+            if (LocalizationUtility.IsVanillaLanguage(__instance.m_language)) return true;
+
+            if (__instance.m_table == null)
+            {
+                LocalizationUtility.WriteError("TextTranslation not initialized");
+                __result = key;
+                return false;
+            }
+
+            string text = __instance.m_table.GetShipLog(key);
+            if (text == null)
+            {
+                LocalizationUtility.WriteError($"String \"{key}\" not found in ShipLog table for language {LocalizationUtility.Instance.GetLanguage(__instance.m_language).Name}");
+                __result = key;
+                return false;
+            }
+
+            text = text.Replace("\\\\n", "\n");
+
+            __result = text;
+
+            return false;
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation._Translate_UI))]
+        private static bool _Translate_UI(
+            int key,
+            TextTranslation __instance,
+            ref string __result)
+        {
+            if (LocalizationUtility.IsVanillaLanguage(__instance.m_language)) return true;
+
+            if (__instance.m_table == null)
+            {
+                LocalizationUtility.WriteError("TextTranslation not initialized");
+                __result = key.ToString();
+                return false;
+            }
+
+            string text = __instance.m_table.Get_UI(key);
+            if (text == null)
+            {
+                LocalizationUtility.WriteError($"UI String #{key} not found in table for language {LocalizationUtility.Instance.GetLanguage(__instance.m_language).Name}");
+                __result = key.ToString();
+                return false;
+            }
+
+            text = text.Replace("\\\\n", "\n");
+
+            __result = text;
+
+            return false;
+        }
+
+        public static string ReadAndRemoveByteOrderMarkFromPath(string path)
+        {
+            byte[] bytes = File.ReadAllBytes(path);
+            byte[] preamble1 = Encoding.UTF8.GetPreamble();
+            byte[] preamble2 = Encoding.Unicode.GetPreamble();
+            byte[] preamble3 = Encoding.BigEndianUnicode.GetPreamble();
+            if (bytes.StartsWith(preamble1))
+                return Encoding.UTF8.GetString(bytes, preamble1.Length, bytes.Length - preamble1.Length);
+            if (bytes.StartsWith(preamble2))
+                return Encoding.Unicode.GetString(bytes, preamble2.Length, bytes.Length - preamble2.Length);
+            return bytes.StartsWith(preamble3) ? Encoding.BigEndianUnicode.GetString(bytes, preamble3.Length, bytes.Length - preamble3.Length) : Encoding.UTF8.GetString(bytes);
         }
     }
 }

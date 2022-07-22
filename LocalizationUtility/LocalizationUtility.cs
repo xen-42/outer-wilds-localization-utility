@@ -3,6 +3,7 @@ using OWML.Common;
 using OWML.ModHelper;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace LocalizationUtility
@@ -11,30 +12,50 @@ namespace LocalizationUtility
     {
         public static LocalizationUtility Instance;
 
-        public static TextTranslation.Language languageToReplace = TextTranslation.Language.ENGLISH;
+        private static readonly List<TextTranslation.Language> vanillaLanguages = Enum.GetNames(typeof(TextTranslation.Language)).Select(name => (TextTranslation.Language)Enum.Parse(typeof(TextTranslation.Language), name)).ToList();
 
-        private Dictionary<string, CustomLanguage> _customLanguages = new();
-        private string currentLanguage;
+        internal Dictionary<string, CustomLanguage> _customLanguages = new();
+
+        internal bool hasAnyCustomLanguages => _customLanguages.Count > 0;
 
         public override object GetApi()
         {
             return new LocalizationAPI();
         }
 
-        public CustomLanguage GetLanguage()
+        internal static bool IsVanillaLanguage(TextTranslation.Language language)
         {
-            if (currentLanguage != null && _customLanguages.TryGetValue(currentLanguage, out var customLanguage)) {
+            return vanillaLanguages.Contains(language);
+        }
+
+        public CustomLanguage GetLanguage() => GetLanguage(TextTranslation.Get().GetLanguage());
+
+        public CustomLanguage GetLanguage(string name)
+        {
+            if (name != null && _customLanguages.TryGetValue(name, out var customLanguage)) {
                 return customLanguage;
             }
 
-            WriteError("The selected language is null");
+            WriteError($"The language \"{name}\" is null");
+            return null;
+        }
+
+        public CustomLanguage GetLanguage(TextTranslation.Language language)
+        {
+            if (name != null) {
+                CustomLanguage customLanguage = _customLanguages.Values.FirstOrDefault(cl => cl.Language == language);
+                if (customLanguage != null) {
+                    return customLanguage;
+                }
+            }
+
+            WriteError($"The language {language} is null");
             return null;
         }
 
         public void SetLanguage(string name)
         {
-            currentLanguage = name;
-            TextTranslation.s_theTable.SetLanguage(TextTranslation.Language.ENGLISH);
+            TextTranslation.s_theTable.SetLanguage(GetLanguage(name).Language);
         }
 
         public void RegisterLanguage(ModBehaviour mod, string name, string translationPath)
@@ -43,10 +64,9 @@ namespace LocalizationUtility
             {
                 WriteLine($"Registering new language {name}");
 
-                _customLanguages[name] = new CustomLanguage(name, translationPath, mod);
+                TextTranslation.Language newLanguage = (hasAnyCustomLanguages ? _customLanguages.Values.Max(cl => cl.Language) : vanillaLanguages.Max()) + 1;
 
-                // For now it only supports one language mod at a time
-                currentLanguage = name;
+                _customLanguages[name] = new CustomLanguage(name, newLanguage, translationPath, mod);
             }
             catch(Exception ex)
             {
@@ -90,11 +110,17 @@ namespace LocalizationUtility
             WriteLine($"Translation mod {nameof(LocalizationUtility)} is loaded!");
         }
 
+        private void OnApplicationQuit() => PlayerData.SaveSettings();
+
         public static void WriteLine(string msg, MessageType type = MessageType.Info)
         {
             Instance.ModHelper.Console.WriteLine($"{type}: {msg}", type);
         }
 
         public static void WriteError(string msg) => WriteLine(msg, MessageType.Error);
+
+        public static LanguageSaveFile Load() => Instance.ModHelper.Storage.Load<LanguageSaveFile>("langaugeSave.json") ?? LanguageSaveFile.DEFAULT;
+
+        public static void Save(LanguageSaveFile save) => Instance.ModHelper.Storage.Save(save ?? LanguageSaveFile.DEFAULT, "langaugeSave.json");
     }
 }
