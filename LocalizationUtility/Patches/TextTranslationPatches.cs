@@ -1,6 +1,8 @@
 ﻿using HarmonyLib;
 using System;
+using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Xml;
 
 namespace LocalizationUtility
@@ -27,7 +29,7 @@ namespace LocalizationUtility
             try
             {
                 var xmlDoc = new XmlDocument();
-                xmlDoc.Load(path);
+                xmlDoc.LoadXml(ReadAndRemoveByteOrderMarkFromPath(path));
 
                 var translationTableNode = xmlDoc.SelectSingleNode("TranslationTable_XML");
                 var translationTable_XML = new TextTranslation.TranslationTable_XML();
@@ -82,6 +84,19 @@ namespace LocalizationUtility
             }
 
             return false;
+        }
+
+        public static string ReadAndRemoveByteOrderMarkFromPath(string path)
+        {
+            byte[] bytes = File.ReadAllBytes(path);
+            byte[] preamble1 = Encoding.UTF8.GetPreamble();
+            byte[] preamble2 = Encoding.Unicode.GetPreamble();
+            byte[] preamble3 = Encoding.BigEndianUnicode.GetPreamble();
+            if (bytes.StartsWith(preamble1))
+                return Encoding.UTF8.GetString(bytes, preamble1.Length, bytes.Length - preamble1.Length);
+            if (bytes.StartsWith(preamble2))
+                return Encoding.Unicode.GetString(bytes, preamble2.Length, bytes.Length - preamble2.Length);
+            return bytes.StartsWith(preamble3) ? Encoding.BigEndianUnicode.GetString(bytes, preamble3.Length, bytes.Length - preamble3.Length) : Encoding.UTF8.GetString(bytes);
         }
     }
 }
