@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using UnityEngine;
 
-namespace TranslationTemplate
+namespace LocalizationUtility
 {
     [HarmonyPatch]
     public static class FontPatches
@@ -9,7 +9,7 @@ namespace TranslationTemplate
         private static bool UsingCustomFont()
         {
             if (TextTranslation.s_theTable.m_language != TextTranslation.Language.ENGLISH) return false;
-            return TranslationTemplate.Instance.GetLanguage()?.Font != null;
+            return LocalizationUtility.Instance.GetLanguage()?.Font != null;
         }
 
         [HarmonyPrefix]
@@ -18,7 +18,7 @@ namespace TranslationTemplate
         {
             if (!UsingCustomFont()) return true;
 
-            __result = TranslationTemplate.Instance.GetLanguage().Font;
+            __result = LocalizationUtility.Instance.GetLanguage().Font;
 
             return false;
         }
@@ -56,7 +56,7 @@ namespace TranslationTemplate
         {
             if (!UsingCustomFont()) return true;
 
-            __result = TranslationTemplate.Instance.GetLanguage().Font;
+            __result = LocalizationUtility.Instance.GetLanguage().Font;
 
             return false;
         }
@@ -67,9 +67,9 @@ namespace TranslationTemplate
         {
             if (!UsingCustomFont()) return true;
 
-            __instance._fontInUse = TranslationTemplate.Instance.GetLanguage().Font;
-            __instance._dynamicFontInUse = TranslationTemplate.Instance.GetLanguage().Font;
-            __instance._textField.font = TranslationTemplate.Instance.GetLanguage().Font;
+            __instance._fontInUse = LocalizationUtility.Instance.GetLanguage().Font;
+            __instance._dynamicFontInUse = LocalizationUtility.Instance.GetLanguage().Font;
+            __instance._textField.font = LocalizationUtility.Instance.GetLanguage().Font;
 
             return false;
         }
@@ -80,7 +80,7 @@ namespace TranslationTemplate
         {
             if (!UsingCustomFont()) return true;
 
-            __result = TranslationTemplate.Instance.GetLanguage().Font;
+            __result = LocalizationUtility.Instance.GetLanguage().Font;
 
             return false;
         }
@@ -91,7 +91,7 @@ namespace TranslationTemplate
         {
             if (!UsingCustomFont()) return true;
 
-            __instance._deathText.font = TranslationTemplate.Instance.GetLanguage().Font;
+            __instance._deathText.font = LocalizationUtility.Instance.GetLanguage().Font;
 
             return false;
         }

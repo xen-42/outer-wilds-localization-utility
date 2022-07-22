@@ -28,6 +28,6 @@
 	  </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="TranslationTemplate.csproj.user" />
+    <Content Include="LocalizationUtility.csproj.user" />
   </ItemGroup>
 </Project>

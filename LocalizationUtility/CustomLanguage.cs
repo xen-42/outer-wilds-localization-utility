@@ -2,7 +2,7 @@
 using System;
 using UnityEngine;
 
-namespace TranslationTemplate
+namespace LocalizationUtility
 {
     public class CustomLanguage
     {
@@ -21,7 +21,14 @@ namespace TranslationTemplate
             _fontAssetBundlePath = mod.ModHelper.Manifest.ModFolderPath + assetBundlePath;
             _fontAssetPath = fontPath;
 
-            Font = AssetBundle.LoadFromFile(_fontAssetBundlePath).LoadAsset<Font>(_fontAssetPath);
+            try
+            {
+                Font = AssetBundle.LoadFromFile(_fontAssetBundlePath).LoadAsset<Font>(_fontAssetPath);
+            }
+            catch (Exception) { };
+
+            if (Font == null) LocalizationUtility.WriteError($"Couldn't load font at {_fontAssetPath} in bundle {_fontAssetBundlePath}");
+
             Fixer = fixer;
         }
 

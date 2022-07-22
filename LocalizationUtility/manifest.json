@@ -1,9 +1,9 @@
 {
   "$schema": "https://raw.githubusercontent.com/amazingalek/owml/master/schemas/manifest_schema.json",
-  "filename": "TranslationTemplate.dll",
+  "filename": "LocalizationUtility.dll",
   "author": "xen",
-  "name": "Translation Template",
-  "uniqueName": "xen.TranslationTemplate",
+  "name": "Interplanetary Polyglot",
+  "uniqueName": "xen.LocalizationUtility",
   "version": "0.1.0",
   "owmlVersion": "2.5.2"
 }

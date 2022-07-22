@@ -1,5 +1,0 @@
-﻿<Project>
-  <PropertyGroup>
-    <OutputPath>$(AppData)\OuterWildsModManager\OWML\Mods\xen.TranslationTemplate</OutputPath>
-  </PropertyGroup>
-</Project>

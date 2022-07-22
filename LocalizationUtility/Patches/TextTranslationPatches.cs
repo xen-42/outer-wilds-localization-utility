@@ -3,7 +3,7 @@ using System;
 using System.Reflection;
 using System.Xml;
 
-namespace TranslationTemplate
+namespace LocalizationUtility
 {
     [HarmonyPatch]
     public static class TextTranslationPatches
@@ -18,11 +18,11 @@ namespace TranslationTemplate
 
             __instance.m_language = TextTranslation.Language.ENGLISH;
 
-            var language = TranslationTemplate.Instance.GetLanguage();
+            var language = LocalizationUtility.Instance.GetLanguage();
 
             var path = language.TranslationPath;
 
-            TranslationTemplate.WriteLine($"Loading translation from {path}");
+            LocalizationUtility.WriteLine($"Loading translation from {path}");
 
             try
             {
@@ -77,7 +77,7 @@ namespace TranslationTemplate
             }
             catch (Exception e)
             {
-                TranslationTemplate.WriteError($"Couldn't load translation: {e.Message}{e.StackTrace}");
+                LocalizationUtility.WriteError($"Couldn't load translation: {e.Message}{e.StackTrace}");
                 return true;
             }
 
