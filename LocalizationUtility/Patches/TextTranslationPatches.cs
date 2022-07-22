@@ -12,7 +12,7 @@ namespace LocalizationUtility
     {
         [HarmonyPrefix]
         [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation.SetLanguage))]
-        public static bool TextTranslation_SetLanguage(TextTranslation.Language lang, TextTranslation __instance)
+        public static bool TextTranslation_SetLanguage(ref TextTranslation.Language lang, TextTranslation __instance)
         {
             if (LocalizationUtility.IsVanillaLanguage(lang)) return true;
 
@@ -20,8 +20,8 @@ namespace LocalizationUtility
 
             if (language == null)
             {
-                LocalizationUtility.WriteError("Language " + lang + " is null!");
-                return false;
+                lang = TextTranslation.Language.UNKNOWN;
+                return true;
             }
 
             __instance.m_language = language.Language;
@@ -85,6 +85,7 @@ namespace LocalizationUtility
             catch (Exception e)
             {
                 LocalizationUtility.WriteError($"Couldn't load translation for language {language.Name}: {e.Message}{e.StackTrace}");
+                lang = TextTranslation.Language.UNKNOWN;
                 return true;
             }
 
