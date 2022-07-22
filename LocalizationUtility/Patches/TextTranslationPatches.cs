@@ -3,7 +3,7 @@ using System;
 using System.Reflection;
 using System.Xml;
 
-namespace TranslationTemplate
+namespace LocalizationUtility
 {
     [HarmonyPatch]
     public static class TextTranslationPatches
@@ -12,12 +12,17 @@ namespace TranslationTemplate
         [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation.SetLanguage))]
         public static bool TextTranslation_SetLanguage(TextTranslation.Language lang, TextTranslation __instance)
         {
-            // We're just going to replace English for now
+            if (lang > TextTranslation.Language.TURKISH) lang = TextTranslation.Language.ENGLISH;
+
             if (lang != TextTranslation.Language.ENGLISH) return true;
 
-            __instance.m_language = lang;
-            var path = TranslationTemplate.Instance.ModHelper.Manifest.ModFolderPath + "/" + TranslationTemplate.translationFile;
-            TranslationTemplate.WriteLine($"Loading translation from {path}");
+            __instance.m_language = TextTranslation.Language.ENGLISH;
+
+            var language = LocalizationUtility.Instance.GetLanguage();
+
+            var path = language.TranslationPath;
+
+            LocalizationUtility.WriteLine($"Loading translation from {path}");
 
             try
             {
@@ -32,6 +37,9 @@ namespace TranslationTemplate
                 {
                     var key = node.SelectSingleNode("key").InnerText;
                     var value = node.SelectSingleNode("value").InnerText;
+
+                    if (language.Fixer != null) value = language.Fixer(value);
+
                     translationTable_XML.table.Add(new TextTranslation.TranslationTableEntry(key, value));
                 }
 
@@ -40,6 +48,9 @@ namespace TranslationTemplate
                 {
                     var key = node.SelectSingleNode("key").InnerText;
                     var value = node.SelectSingleNode("value").InnerText;
+
+                    if (language.Fixer != null) value = language.Fixer(value);
+
                     translationTable_XML.table_shipLog.Add(new TextTranslation.TranslationTableEntry(key, value));
                 }
 
@@ -49,6 +60,9 @@ namespace TranslationTemplate
                     // Keys for UI are all ints
                     var key = int.Parse(node.SelectSingleNode("key").InnerText);
                     var value = node.SelectSingleNode("value").InnerText;
+
+                    if (language.Fixer != null) value = language.Fixer(value);
+
                     translationTable_XML.table_ui.Add(new TextTranslation.TranslationTableEntryUI(key, value));
                 }
 
@@ -63,7 +77,7 @@ namespace TranslationTemplate
             }
             catch (Exception e)
             {
-                TranslationTemplate.WriteError($"Couldn't load translation: {e.Message}{e.StackTrace}");
+                LocalizationUtility.WriteError($"Couldn't load translation: {e.Message}{e.StackTrace}");
                 return true;
             }
 
