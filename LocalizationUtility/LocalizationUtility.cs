@@ -12,7 +12,7 @@ namespace LocalizationUtility
     {
         public static LocalizationUtility Instance;
 
-        private static readonly List<TextTranslation.Language> vanillaLanguages = Enum.GetNames(typeof(TextTranslation.Language)).Select(name => (TextTranslation.Language)Enum.Parse(typeof(TextTranslation.Language), name)).ToList();
+        private static readonly HashSet<TextTranslation.Language> vanillaLanguages = new HashSet<TextTranslation.Language>(Enum.GetValues(typeof(TextTranslation.Language)).Cast<TextTranslation.Language>(), EqualityComparer<TextTranslation.Language>.Default);
 
         internal Dictionary<string, CustomLanguage> _customLanguages = new();
 
