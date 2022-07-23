@@ -86,9 +86,9 @@ namespace LocalizationUtility
             if (LocalizationUtility.Instance.hasAnyCustomLanguages)
             {
                 Array.Resize(ref __result, (int)LocalizationUtility.Instance._customLanguages.Values.Max(cl => cl.Language) + 1);
-                __result.SetValue("Total", (int)TextTranslation.Language.TOTAL);
+                __result[(int)TextTranslation.Language.TOTAL] = "Total";
                 foreach (var profile in LocalizationUtility.Instance._customLanguages.Values)
-                    __result.SetValue(profile.Name, (int)profile.Language);
+                    __result[(int)profile.Language] = profile.Name;
             }
         }
 
