@@ -18,21 +18,21 @@ namespace LocalizationUtility
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation.GetFont))]
-        public static bool TextTranslation_GetFont(ref Font __result)
+        public static bool TextTranslation_GetFont(TextTranslation __instance, ref Font __result)
         {
-            if (LocalizationUtility.IsVanillaLanguage(TextTranslation.s_theTable.m_language)) return true;
+            if (LocalizationUtility.IsVanillaLanguage(__instance.m_language)) return true;
 
-            __result = UsingCustomFont() ? LocalizationUtility.Instance.GetLanguage().Font : TextTranslation.s_theTable.m_dynamicFonts[(int)TextTranslation.Language.ENGLISH];
+            __result = UsingCustomFont(__instance.m_language) ? LocalizationUtility.Instance.GetLanguage(__instance.m_language).Font : TextTranslation.s_theTable.m_dynamicFonts[(int)TextTranslation.Language.ENGLISH];
             return false;
         }
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation.IsLanguageLatin))]
-        public static bool TextTranslation_IsLanguageLatin(ref bool __result)
+        public static bool TextTranslation_IsLanguageLatin(TextTranslation __instance, ref bool __result)
         {
-            if (LocalizationUtility.IsVanillaLanguage(TextTranslation.s_theTable.m_language)) return true;
+            if (LocalizationUtility.IsVanillaLanguage(__instance.m_language)) return true;
 
-            __result = !UsingCustomFont();
+            __result = !UsingCustomFont(__instance.m_language);
             return false;
         }
 
@@ -40,19 +40,19 @@ namespace LocalizationUtility
         [HarmonyPatch(typeof(TranslatedSign), nameof(TranslatedSign.Start))]
         public static void TranslatedSign_Start(TranslatedSign __instance)
         {
-            if (LocalizationUtility.IsVanillaLanguage(TextTranslation.s_theTable.m_language)) return;
+            if (LocalizationUtility.IsVanillaLanguage()) return;
 
             __instance._interactVolume.gameObject.SetActive(true);
         }
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation.GetLanguageFont))]
-        public static bool TextTranslation_GetLanguageFont(ref Font __result)
+        public static bool TextTranslation_GetLanguageFont(TextTranslation __instance, ref Font __result)
         {
-            if (LocalizationUtility.IsVanillaLanguage(TextTranslation.s_theTable.m_language))
+            if (LocalizationUtility.IsVanillaLanguage(__instance.m_language))
                 __result = TextTranslation.GetFont(true); // Set vanilla language font to dynamic so that custom language's names will actually show up correctly in settings.
-            else if (UsingCustomFont())
-                __result = LocalizationUtility.Instance.GetLanguage().Font;
+            else if (UsingCustomFont(__instance.m_language))
+                __result = LocalizationUtility.Instance.GetLanguage(__instance.m_language).Font;
             else
                 __result = TextTranslation.s_theTable.m_dynamicFonts[(int)TextTranslation.Language.ENGLISH];
             return false;
@@ -77,7 +77,7 @@ namespace LocalizationUtility
         [HarmonyPatch(typeof(GameOverController), nameof(GameOverController.SetupGameOverScreen))]
         public static bool GameOverController_SetupGameOverScreen(GameOverController __instance)
         {
-            if (LocalizationUtility.IsVanillaLanguage(TextTranslation.s_theTable.m_language)) return true;
+            if (LocalizationUtility.IsVanillaLanguage()) return true;
 
             if (!UsingCustomFont()) return true;
 
@@ -88,11 +88,11 @@ namespace LocalizationUtility
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation.GetDefaultFontSpacing))]
-        public static bool TextTranslation_GetDefaultFontSpacing(ref float __result)
+        public static bool TextTranslation_GetDefaultFontSpacing(TextTranslation __instance, ref float __result)
         {
-            if (LocalizationUtility.IsVanillaLanguage(TextTranslation.s_theTable.m_language)) return true;
+            if (LocalizationUtility.IsVanillaLanguage(__instance.m_language)) return true;
 
-            if (UsingCustomFont()) __result = 1;
+            if (UsingCustomFont(__instance.m_language)) __result = 1;
             else __result = TextTranslation.s_theTable.m_defaultSpacing[(int)TextTranslation.Language.ENGLISH];
 
             return false;
@@ -100,11 +100,11 @@ namespace LocalizationUtility
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation.GetFontSizeModifier))]
-        public static bool TextTranslation_GetFontSizeModifier(ref float __result)
+        public static bool TextTranslation_GetFontSizeModifier(TextTranslation __instance, ref float __result)
         {
-            if (LocalizationUtility.IsVanillaLanguage(TextTranslation.s_theTable.m_language)) return true;
+            if (LocalizationUtility.IsVanillaLanguage(__instance.m_language)) return true;
 
-            if (UsingCustomFont()) __result = 1;
+            if (UsingCustomFont(__instance.m_language)) __result = 1;
             else __result = TextTranslation.s_theTable.m_fontSizeModifier[(int)TextTranslation.Language.ENGLISH];
 
 

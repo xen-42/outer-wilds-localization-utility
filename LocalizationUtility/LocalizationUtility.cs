@@ -23,10 +23,9 @@ namespace LocalizationUtility
             return new LocalizationAPI();
         }
 
-        internal static bool IsVanillaLanguage(TextTranslation.Language language)
-        {
-            return vanillaLanguages.Contains(language);
-        }
+        internal static bool IsVanillaLanguage() => IsVanillaLanguage(TextTranslation.Get().GetLanguage());
+
+        internal static bool IsVanillaLanguage(TextTranslation.Language language) => vanillaLanguages.Contains(language);
 
         public CustomLanguage GetLanguage() => GetLanguage(TextTranslation.Get().GetLanguage());
 
