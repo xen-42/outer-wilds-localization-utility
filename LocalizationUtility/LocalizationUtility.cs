@@ -109,8 +109,6 @@ namespace LocalizationUtility
             WriteLine($"Translation mod {nameof(LocalizationUtility)} is loaded!");
         }
 
-        private void OnApplicationQuit() => PlayerData.SaveSettings();
-
         public static void WriteLine(string msg, MessageType type = MessageType.Info)
         {
             Instance.ModHelper.Console.WriteLine($"{type}: {msg}", type);
