@@ -116,8 +116,8 @@ namespace LocalizationUtility
 
         public static void WriteError(string msg) => WriteLine(msg, MessageType.Error);
 
-        public static LanguageSaveFile Load() => Instance.ModHelper.Storage.Load<LanguageSaveFile>("langaugeSave.json") ?? LanguageSaveFile.DEFAULT;
+        public static LanguageSaveFile Load() => Instance.ModHelper.Storage.Load<LanguageSaveFile>("languageSave.json") ?? LanguageSaveFile.DEFAULT;
 
-        public static void Save(LanguageSaveFile save) => Instance.ModHelper.Storage.Save(save ?? LanguageSaveFile.DEFAULT, "langaugeSave.json");
+        public static void Save(LanguageSaveFile save) => Instance.ModHelper.Storage.Save(save ?? LanguageSaveFile.DEFAULT, "languageSave.json");
     }
 }
