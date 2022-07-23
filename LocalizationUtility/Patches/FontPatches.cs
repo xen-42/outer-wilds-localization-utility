@@ -18,11 +18,17 @@ namespace LocalizationUtility
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation.GetFont))]
-        public static bool TextTranslation_GetFont(TextTranslation __instance, ref Font __result)
+        public static bool TextTranslation_GetFont(ref Font __result)
         {
-            if (LocalizationUtility.IsVanillaLanguage(__instance.m_language)) return true;
+            if (TextTranslation.s_theTable == null)
+            {
+                __result = null;
+                return false;
+            }
 
-            __result = UsingCustomFont(__instance.m_language) ? LocalizationUtility.Instance.GetLanguage(__instance.m_language).Font : TextTranslation.s_theTable.m_dynamicFonts[(int)TextTranslation.Language.ENGLISH];
+            if (LocalizationUtility.IsVanillaLanguage()) return true;
+
+            __result = UsingCustomFont() ? LocalizationUtility.Instance.GetLanguage().Font : TextTranslation.s_theTable.m_dynamicFonts[(int)TextTranslation.Language.ENGLISH];
             return false;
         }
 
@@ -47,14 +53,21 @@ namespace LocalizationUtility
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation.GetLanguageFont))]
-        public static bool TextTranslation_GetLanguageFont(TextTranslation __instance, ref Font __result)
+        public static bool TextTranslation_GetLanguageFont(ref Font __result)
         {
-            if (LocalizationUtility.IsVanillaLanguage(__instance.m_language))
+            if (TextTranslation.s_theTable == null)
+            {
+                __result = null;
+                return false;
+            }
+
+            if (LocalizationUtility.IsVanillaLanguage())
                 __result = TextTranslation.GetFont(true); // Set vanilla language font to dynamic so that custom language's names will actually show up correctly in settings.
-            else if (UsingCustomFont(__instance.m_language))
-                __result = LocalizationUtility.Instance.GetLanguage(__instance.m_language).Font;
+            else if (UsingCustomFont())
+                __result = LocalizationUtility.Instance.GetLanguage().Font;
             else
                 __result = TextTranslation.s_theTable.m_dynamicFonts[(int)TextTranslation.Language.ENGLISH];
+
             return false;
         }
 
@@ -88,11 +101,17 @@ namespace LocalizationUtility
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation.GetDefaultFontSpacing))]
-        public static bool TextTranslation_GetDefaultFontSpacing(TextTranslation __instance, ref float __result)
+        public static bool TextTranslation_GetDefaultFontSpacing(ref float __result)
         {
-            if (LocalizationUtility.IsVanillaLanguage(__instance.m_language)) return true;
+            if (TextTranslation.s_theTable == null)
+            {
+                __result = 1;
+                return false;
+            }
 
-            if (UsingCustomFont(__instance.m_language)) __result = 1;
+            if (LocalizationUtility.IsVanillaLanguage()) return true;
+
+            if (UsingCustomFont()) __result = 1;
             else __result = TextTranslation.s_theTable.m_defaultSpacing[(int)TextTranslation.Language.ENGLISH];
 
             return false;
@@ -100,11 +119,17 @@ namespace LocalizationUtility
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation.GetFontSizeModifier))]
-        public static bool TextTranslation_GetFontSizeModifier(TextTranslation __instance, ref float __result)
+        public static bool TextTranslation_GetFontSizeModifier(ref float __result)
         {
-            if (LocalizationUtility.IsVanillaLanguage(__instance.m_language)) return true;
+            if (TextTranslation.s_theTable == null)
+            {
+                __result = 1;
+                return false;
+            }
 
-            if (UsingCustomFont(__instance.m_language)) __result = 1;
+            if (LocalizationUtility.IsVanillaLanguage()) return true;
+
+            if (UsingCustomFont()) __result = 1;
             else __result = TextTranslation.s_theTable.m_fontSizeModifier[(int)TextTranslation.Language.ENGLISH];
 
 
