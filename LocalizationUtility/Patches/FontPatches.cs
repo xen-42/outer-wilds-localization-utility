@@ -11,6 +11,11 @@ namespace LocalizationUtility
             return LocalizationUtility.Instance.GetLanguage()?.Font != null;
         }
 
+        private static bool UsingCustomFont(TextTranslation.Language language)
+        {
+            return LocalizationUtility.Instance.GetLanguage(language)?.Font != null;
+        }
+
         [HarmonyPrefix]
         [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation.GetFont))]
         public static bool TextTranslation_GetFont(ref Font __result)
@@ -57,11 +62,13 @@ namespace LocalizationUtility
         [HarmonyPatch(typeof(UIStyleManager), nameof(UIStyleManager.GetMenuFont))]
         public static bool UIStyleManager_GetMenuFont(ref Font __result)
         {
-            if (LocalizationUtility.IsVanillaLanguage(PlayerData.GetSavedLanguage())) return true;
+            var savedLanguage = PlayerData.GetSavedLanguage();
 
-            if (!UsingCustomFont()) return true;
+            if (LocalizationUtility.IsVanillaLanguage(savedLanguage)) return true;
 
-            __result = LocalizationUtility.Instance.GetLanguage().Font;
+            if (!UsingCustomFont(savedLanguage)) return true;
+
+            __result = LocalizationUtility.Instance.GetLanguage(savedLanguage).Font;
 
             return false;
         }
