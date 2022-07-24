@@ -12,11 +12,11 @@ namespace LocalizationUtility
         [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation.SetLanguage))]
         public static bool TextTranslation_SetLanguage(TextTranslation.Language lang, TextTranslation __instance)
         {
-            if (lang > TextTranslation.Language.TURKISH) lang = TextTranslation.Language.ENGLISH;
+            if (lang > TextTranslation.Language.TURKISH) lang = LocalizationUtility.languageToReplace;
 
-            if (lang != TextTranslation.Language.ENGLISH) return true;
+            if (lang != LocalizationUtility.languageToReplace) return true;
 
-            __instance.m_language = TextTranslation.Language.ENGLISH;
+            __instance.m_language = lang;
 
             var language = LocalizationUtility.Instance.GetLanguage();
 

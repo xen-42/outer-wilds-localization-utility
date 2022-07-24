@@ -8,7 +8,7 @@ namespace LocalizationUtility
     {
         private static bool UsingCustomFont()
         {
-            if (TextTranslation.s_theTable.m_language != TextTranslation.Language.ENGLISH) return false;
+            if (TextTranslation.s_theTable.m_language != LocalizationUtility.languageToReplace) return false;
             return LocalizationUtility.Instance.GetLanguage()?.Font != null;
         }
 
@@ -27,7 +27,7 @@ namespace LocalizationUtility
         [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation.IsLanguageLatin))]
         public static bool TextTranslation_IsLanguageLatin(ref bool __result)
         {
-            if (TextTranslation.s_theTable.m_language != TextTranslation.Language.ENGLISH) return true;
+            if (TextTranslation.s_theTable.m_language != LocalizationUtility.languageToReplace) return true;
 
             if (UsingCustomFont())
             {

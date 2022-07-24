@@ -10,11 +10,13 @@ namespace LocalizationUtility
         public string TranslationPath { get; private set; }
         public Font Font { get; private set; }
         public Func<string, string> Fixer { get; private set; }
+        public TextTranslation.Language LanguageToReplace { get; private set; }
 
-        public CustomLanguage(string name, string translationPath, ModBehaviour mod)
+        public CustomLanguage(string name, string translationPath, ModBehaviour mod, TextTranslation.Language languageToReplace)
         {
             Name = name;
             TranslationPath = mod.ModHelper.Manifest.ModFolderPath + translationPath;
+            LanguageToReplace = languageToReplace;
         }
 
         public void AddFont(string assetBundlePath, string fontPath, ModBehaviour mod)

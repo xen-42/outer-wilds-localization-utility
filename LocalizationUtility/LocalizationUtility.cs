@@ -11,7 +11,7 @@ namespace LocalizationUtility
     {
         public static LocalizationUtility Instance;
 
-        public static TextTranslation.Language languageToReplace = TextTranslation.Language.ENGLISH;
+        public static TextTranslation.Language languageToReplace => Instance.GetLanguage().LanguageToReplace;
 
         private Dictionary<string, CustomLanguage> _customLanguages = new();
         private string currentLanguage;
@@ -37,13 +37,13 @@ namespace LocalizationUtility
             TextTranslation.s_theTable.SetLanguage(TextTranslation.Language.ENGLISH);
         }
 
-        public void RegisterLanguage(ModBehaviour mod, string name, string translationPath)
+        public void RegisterLanguage(ModBehaviour mod, string name, string translationPath, TextTranslation.Language languageToReplace)
         {
             try
             {
                 WriteLine($"Registering new language {name}");
 
-                _customLanguages[name] = new CustomLanguage(name, translationPath, mod);
+                _customLanguages[name] = new CustomLanguage(name, translationPath, mod, languageToReplace);
 
                 // For now it only supports one language mod at a time
                 currentLanguage = name;
