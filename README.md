@@ -4,8 +4,6 @@ This project is meant to have common code required for translation mods.
 
 Based on [Outer Wilds Korean Translation](https://outerwildsmods.com/mods/outerwildskoreantranslation/) and [Outer Wilds Traditional Chinese Translation](https://outerwildsmods.com/mods/outerwildstraditionalchinesetranslation/).
 
-#### This repo contains the base game English translation file (Translation.xml) which can be used as a template for any translation mod. Just translate the <value> entries of the XML and leave the original English <key> entries alone.
-
 ## Getting started
 
 1. Create a base mod using [the regular mod template.](https://github.com/Raicuparta/ow-mod-template). 
@@ -54,3 +52,9 @@ Based on [Outer Wilds Korean Translation](https://outerwildsmods.com/mods/outerw
     ```
     This assumes that the XML file with original text and your translations is in the `assets/Translation.xml` file.
 6. Optionally, add a font or a fixer function with `api.AddLanguageFont` or `api.AddLanguageFixer` underneath the `api.RegisterLanguage` line. Adding a font is optional. A "fixer" function will take in a string and output a string where the characters have been correctly reformatted. This is necessary for certain languages, e.g. right-to-left languages like Arabic or Farsi.
+
+## Other info
+
+This repo contains the base game English translation file (Translation.xml) which can be used as a template for any translation mod. Just translate the <value> entries of the XML and leave the original English <key> entries alone.
+
+When adding a font, you must first package it into a Unity asset bundle. Use Unity 2019.4.27f1 for this (Unity Hub has options for downloading legacy versions of Unity) as this is the version Outer Wilds was released in.
