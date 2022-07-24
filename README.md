@@ -4,6 +4,8 @@ This project is meant to have common code required for translation mods.
 
 Based on [Outer Wilds Korean Translation](https://outerwildsmods.com/mods/outerwildskoreantranslation/) and [Outer Wilds Traditional Chinese Translation](https://outerwildsmods.com/mods/outerwildstraditionalchinesetranslation/).
 
+#### This repo contains the base game English translation file (Translation.xml) which can be used as a template for any translation mod. Just translate the <value> entries of the XML and leave the original English <key> entries alone.
+
 ## Getting started
 
 1. Create a base mod using [the regular mod template.](https://github.com/Raicuparta/ow-mod-template). 
