@@ -37,6 +37,14 @@ namespace LocalizationUtility
                 xmlDoc.LoadXml(ReadAndRemoveByteOrderMarkFromPath(path));
 
                 var translationTableNode = xmlDoc.SelectSingleNode("TranslationTable_XML");
+
+                if (translationTableNode == null)
+                {
+                    LocalizationUtility.WriteError($"TranslationTable_XML could not be found in translation file for language {language.Name}");
+                    lang = TextTranslation.Language.UNKNOWN;
+                    return true;
+                }
+
                 var translationTable_XML = new TextTranslation.TranslationTable_XML();
 
                 // Add regular text to the table
