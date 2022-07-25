@@ -11,5 +11,9 @@ namespace LocalizationUtility
             => LocalizationUtility.Instance.AddLanguageFont(mod, name, assetBundlePath, fontPath);
         public void AddLanguageFixer(string name, Func<string, string> fixer)
             => LocalizationUtility.Instance.AddLanguageFixer(name, fixer);
+        public void SetLanguageDefaultFontSpacing(string name, float defaultFontSpacing)
+            => LocalizationUtility.Instance.SetLanguageDefaultFontSpacing(name, defaultFontSpacing);
+        public void SetLanguageFontSizeModifier(string name, float fontSizeModifier)
+            => LocalizationUtility.Instance.SetLanguageFontSizeModifier(name, fontSizeModifier);
     }
 }

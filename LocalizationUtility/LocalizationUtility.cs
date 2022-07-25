@@ -97,6 +97,30 @@ namespace LocalizationUtility
             }
         }
 
+        public void SetLanguageDefaultFontSpacing(string name, float defaultFontSpacing)
+        {
+            try
+            {
+                _customLanguages[name].SetDefaultFontSpacing(defaultFontSpacing);
+            }
+            catch (Exception ex)
+            {
+                WriteError($"Failed to set default font spacing for language. {ex}");
+            }
+        }
+
+        public void SetLanguageFontSizeModifier(string name, float fontSizeModifier)
+        {
+            try
+            {
+                _customLanguages[name].SetFontSizeModifier(fontSizeModifier);
+            }
+            catch (Exception ex)
+            {
+                WriteError($"Failed to set font size modifier for language. {ex}");
+            }
+        }
+
         private void Awake()
         {
             Instance = this;

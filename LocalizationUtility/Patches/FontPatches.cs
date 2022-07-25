@@ -111,7 +111,7 @@ namespace LocalizationUtility
 
             if (LocalizationUtility.IsVanillaLanguage()) return true;
 
-            if (UsingCustomFont()) __result = 1;
+            if (UsingCustomFont()) __result = LocalizationUtility.Instance.GetLanguage().DefaultFontSpacing;
             else __result = TextTranslation.s_theTable.m_defaultSpacing[(int)TextTranslation.Language.ENGLISH];
 
             return false;
@@ -129,7 +129,7 @@ namespace LocalizationUtility
 
             if (LocalizationUtility.IsVanillaLanguage()) return true;
 
-            if (UsingCustomFont()) __result = 1;
+            if (UsingCustomFont()) __result = LocalizationUtility.Instance.GetLanguage().FontSizeModifier;
             else __result = TextTranslation.s_theTable.m_fontSizeModifier[(int)TextTranslation.Language.ENGLISH];
 
 
