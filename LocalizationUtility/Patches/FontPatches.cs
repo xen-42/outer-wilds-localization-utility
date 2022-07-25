@@ -28,7 +28,7 @@ namespace LocalizationUtility
 
             if (LocalizationUtility.IsVanillaLanguage()) return true;
 
-            __result = UsingCustomFont() ? LocalizationUtility.Instance.GetLanguage().Font : TextTranslation.s_theTable.m_dynamicFonts[(int)TextTranslation.Language.ENGLISH];
+            __result = UsingCustomFont() ? LocalizationUtility.Instance.GetLanguage().Font : TextTranslation.s_theTable.m_dynamicFonts[(int)LocalizationUtility.languageToReplace];
             return false;
         }
 
@@ -66,7 +66,7 @@ namespace LocalizationUtility
             else if (UsingCustomFont())
                 __result = LocalizationUtility.Instance.GetLanguage().Font;
             else
-                __result = TextTranslation.s_theTable.m_dynamicFonts[(int)TextTranslation.Language.ENGLISH];
+                __result = TextTranslation.s_theTable.m_dynamicFonts[(int)LocalizationUtility.languageToReplace];
 
             return false;
         }
@@ -112,7 +112,7 @@ namespace LocalizationUtility
             if (LocalizationUtility.IsVanillaLanguage()) return true;
 
             if (UsingCustomFont()) __result = LocalizationUtility.Instance.GetLanguage().DefaultFontSpacing;
-            else __result = TextTranslation.s_theTable.m_defaultSpacing[(int)TextTranslation.Language.ENGLISH];
+            else __result = TextTranslation.s_theTable.m_defaultSpacing[(int)LocalizationUtility.languageToReplace];
 
             return false;
         }
@@ -130,7 +130,7 @@ namespace LocalizationUtility
             if (LocalizationUtility.IsVanillaLanguage()) return true;
 
             if (UsingCustomFont()) __result = LocalizationUtility.Instance.GetLanguage().FontSizeModifier;
-            else __result = TextTranslation.s_theTable.m_fontSizeModifier[(int)TextTranslation.Language.ENGLISH];
+            else __result = TextTranslation.s_theTable.m_fontSizeModifier[(int)LocalizationUtility.languageToReplace];
 
 
             return false;

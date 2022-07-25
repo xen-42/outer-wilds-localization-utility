@@ -13,6 +13,8 @@ namespace LocalizationUtility
         public static LocalizationUtility Instance;
 
         private static readonly HashSet<TextTranslation.Language> vanillaLanguages = new HashSet<TextTranslation.Language>(Enum.GetValues(typeof(TextTranslation.Language)).Cast<TextTranslation.Language>());
+        
+        public static TextTranslation.Language languageToReplace => Instance.GetLanguage().LanguageToReplace;
 
         internal Dictionary<string, CustomLanguage> _customLanguages = new();
 
@@ -57,15 +59,15 @@ namespace LocalizationUtility
             TextTranslation.s_theTable.SetLanguage(GetLanguage(name).Language);
         }
 
-        public void RegisterLanguage(ModBehaviour mod, string name, string translationPath)
+        public void RegisterLanguage(ModBehaviour mod, string name, string translationPath, TextTranslation.Language languageToReplace)
         {
             try
             {
                 WriteLine($"Registering new language {name}");
 
                 TextTranslation.Language newLanguage = (hasAnyCustomLanguages ? _customLanguages.Values.Max(cl => cl.Language) : vanillaLanguages.Max()) + 1;
-
-                _customLanguages[name] = new CustomLanguage(name, newLanguage, translationPath, mod);
+                
+                _customLanguages[name] = new CustomLanguage(name, newLanguage, translationPath, mod, languageToReplace);
             }
             catch(Exception ex)
             {

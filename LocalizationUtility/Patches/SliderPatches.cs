@@ -40,7 +40,7 @@ namespace LocalizationUtility
             CustomLanguage customLanguage = LocalizationUtility.Instance.GetLanguage(PlayerData._settingsSave.language);
             if (customLanguage != null)
             {
-                PlayerData._settingsSave.language = TextTranslation.Language.ENGLISH;
+                PlayerData._settingsSave.language = customLanguage.LanguageToReplace;
                 LocalizationUtility.Save(new LanguageSaveFile(customLanguage.Name));
             }
             else
