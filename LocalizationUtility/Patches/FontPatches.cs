@@ -135,5 +135,24 @@ namespace LocalizationUtility
 
             return false;
         }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(FontAndLanguageController), nameof(FontAndLanguageController.InitializeFont))]
+        public static void FontAndLanguageController_InitializeFont(FontAndLanguageController __instance)
+        {
+            if (LocalizationUtility.IsVanillaLanguage()) return;
+
+            if (UsingCustomFont())
+            {
+                foreach (var container in __instance._textContainerList)
+                {
+                    if (container.isLanguageFont)
+                    {
+                        container.textElement.fontSize = TextTranslation.GetModifiedFontSize(container.originalFontSize);
+                        container.textElement.rectTransform.localScale = container.originalScale;
+                    }
+                }
+            }
+        }
     }
 }
