@@ -8,44 +8,45 @@ namespace LocalizationUtility
     {
         private static bool UsingCustomFont()
         {
-            if (TextTranslation.s_theTable.m_language != LocalizationUtility.languageToReplace) return false;
             return LocalizationUtility.Instance.GetLanguage()?.Font != null;
+        }
+
+        private static bool UsingCustomFont(TextTranslation.Language language)
+        {
+            return LocalizationUtility.Instance.GetLanguage(language)?.Font != null;
         }
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation.GetFont))]
         public static bool TextTranslation_GetFont(ref Font __result)
         {
-            if (!UsingCustomFont()) return true;
+            if (TextTranslation.s_theTable == null)
+            {
+                __result = null;
+                return false;
+            }
 
-            __result = LocalizationUtility.Instance.GetLanguage().Font;
+            if (LocalizationUtility.IsVanillaLanguage()) return true;
 
+            __result = UsingCustomFont() ? LocalizationUtility.Instance.GetLanguage().Font : TextTranslation.s_theTable.m_dynamicFonts[(int)LocalizationUtility.languageToReplace];
             return false;
         }
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation.IsLanguageLatin))]
-        public static bool TextTranslation_IsLanguageLatin(ref bool __result)
+        public static bool TextTranslation_IsLanguageLatin(TextTranslation __instance, ref bool __result)
         {
-            if (TextTranslation.s_theTable.m_language != LocalizationUtility.languageToReplace) return true;
+            if (LocalizationUtility.IsVanillaLanguage(__instance.m_language)) return true;
 
-            if (UsingCustomFont())
-            {
-                __result = false;
-                return false;
-            }
-            else 
-            {
-                __result = true;
-                return false;
-            }
+            __result = !UsingCustomFont(__instance.m_language);
+            return false;
         }
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(TranslatedSign), nameof(TranslatedSign.Start))]
         public static void TranslatedSign_Start(TranslatedSign __instance)
         {
-            if (!UsingCustomFont()) return;
+            if (LocalizationUtility.IsVanillaLanguage()) return;
 
             __instance._interactVolume.gameObject.SetActive(true);
         }
@@ -54,33 +55,33 @@ namespace LocalizationUtility
         [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation.GetLanguageFont))]
         public static bool TextTranslation_GetLanguageFont(ref Font __result)
         {
-            if (!UsingCustomFont()) return true;
+            if (TextTranslation.s_theTable == null)
+            {
+                __result = null;
+                return false;
+            }
 
-            __result = LocalizationUtility.Instance.GetLanguage().Font;
-
-            return false;
-        }
-
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(NomaiTranslatorProp), nameof(NomaiTranslatorProp.InitializeFont))]
-        public static bool NomaiTranslatorProp_InitializeFont(NomaiTranslatorProp __instance)
-        {
-            if (!UsingCustomFont()) return true;
-
-            __instance._fontInUse = LocalizationUtility.Instance.GetLanguage().Font;
-            __instance._dynamicFontInUse = LocalizationUtility.Instance.GetLanguage().Font;
-            __instance._textField.font = LocalizationUtility.Instance.GetLanguage().Font;
+            if (LocalizationUtility.IsVanillaLanguage())
+                __result = TextTranslation.GetFont(true); // Set vanilla language font to dynamic so that custom language's names will actually show up correctly in settings.
+            else if (UsingCustomFont())
+                __result = LocalizationUtility.Instance.GetLanguage().Font;
+            else
+                __result = TextTranslation.s_theTable.m_dynamicFonts[(int)LocalizationUtility.languageToReplace];
 
             return false;
         }
 
         [HarmonyPrefix]
-        [HarmonyPatch(typeof(UIStyleManager), nameof(UIStyleManager.GetShipLogFont))]
-        public static bool UIStyleManager_GetShipLogFont(ref Font __result)
+        [HarmonyPatch(typeof(UIStyleManager), nameof(UIStyleManager.GetMenuFont))]
+        public static bool UIStyleManager_GetMenuFont(ref Font __result)
         {
-            if (!UsingCustomFont()) return true;
+            var savedLanguage = PlayerData.GetSavedLanguage();
 
-            __result = LocalizationUtility.Instance.GetLanguage().Font;
+            if (LocalizationUtility.IsVanillaLanguage(savedLanguage)) return true;
+
+            if (!UsingCustomFont(savedLanguage)) return true;
+
+            __result = LocalizationUtility.Instance.GetLanguage(savedLanguage).Font;
 
             return false;
         }
@@ -89,11 +90,69 @@ namespace LocalizationUtility
         [HarmonyPatch(typeof(GameOverController), nameof(GameOverController.SetupGameOverScreen))]
         public static bool GameOverController_SetupGameOverScreen(GameOverController __instance)
         {
+            if (LocalizationUtility.IsVanillaLanguage()) return true;
+
             if (!UsingCustomFont()) return true;
 
             __instance._deathText.font = LocalizationUtility.Instance.GetLanguage().Font;
 
             return false;
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation.GetDefaultFontSpacing))]
+        public static bool TextTranslation_GetDefaultFontSpacing(ref float __result)
+        {
+            if (TextTranslation.s_theTable == null)
+            {
+                __result = 1;
+                return false;
+            }
+
+            if (LocalizationUtility.IsVanillaLanguage()) return true;
+
+            if (UsingCustomFont()) __result = LocalizationUtility.Instance.GetLanguage().DefaultFontSpacing;
+            else __result = TextTranslation.s_theTable.m_defaultSpacing[(int)LocalizationUtility.languageToReplace];
+
+            return false;
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation.GetFontSizeModifier))]
+        public static bool TextTranslation_GetFontSizeModifier(ref float __result)
+        {
+            if (TextTranslation.s_theTable == null)
+            {
+                __result = 1;
+                return false;
+            }
+
+            if (LocalizationUtility.IsVanillaLanguage()) return true;
+
+            if (UsingCustomFont()) __result = LocalizationUtility.Instance.GetLanguage().FontSizeModifier;
+            else __result = TextTranslation.s_theTable.m_fontSizeModifier[(int)LocalizationUtility.languageToReplace];
+
+
+            return false;
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(FontAndLanguageController), nameof(FontAndLanguageController.InitializeFont))]
+        public static void FontAndLanguageController_InitializeFont(FontAndLanguageController __instance)
+        {
+            if (LocalizationUtility.IsVanillaLanguage()) return;
+
+            if (UsingCustomFont())
+            {
+                foreach (var container in __instance._textContainerList)
+                {
+                    if (container.isLanguageFont)
+                    {
+                        container.textElement.fontSize = TextTranslation.GetModifiedFontSize(container.originalFontSize);
+                        container.textElement.rectTransform.localScale = container.originalScale;
+                    }
+                }
+            }
         }
     }
 }

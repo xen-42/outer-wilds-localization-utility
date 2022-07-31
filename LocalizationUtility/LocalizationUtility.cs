@@ -3,6 +3,7 @@ using OWML.Common;
 using OWML.ModHelper;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace LocalizationUtility
@@ -11,30 +12,51 @@ namespace LocalizationUtility
     {
         public static LocalizationUtility Instance;
 
+        private static readonly HashSet<TextTranslation.Language> vanillaLanguages = new HashSet<TextTranslation.Language>(Enum.GetValues(typeof(TextTranslation.Language)).Cast<TextTranslation.Language>());
+        
         public static TextTranslation.Language languageToReplace => Instance.GetLanguage().LanguageToReplace;
 
-        private Dictionary<string, CustomLanguage> _customLanguages = new();
-        private string currentLanguage;
+        internal Dictionary<string, CustomLanguage> _customLanguages = new();
+
+        internal bool hasAnyCustomLanguages => _customLanguages.Count > 0;
 
         public override object GetApi()
         {
             return new LocalizationAPI();
         }
 
-        public CustomLanguage GetLanguage()
+        internal static bool IsVanillaLanguage() => IsVanillaLanguage(TextTranslation.Get().GetLanguage());
+
+        internal static bool IsVanillaLanguage(TextTranslation.Language language) => vanillaLanguages.Contains(language);
+
+        public CustomLanguage GetLanguage() => GetLanguage(TextTranslation.Get().GetLanguage());
+
+        public CustomLanguage GetLanguage(string name)
         {
-            if (currentLanguage != null && _customLanguages.TryGetValue(currentLanguage, out var customLanguage)) {
+            if (name != null && _customLanguages.TryGetValue(name, out var customLanguage)) {
                 return customLanguage;
             }
 
-            WriteError("The selected language is null");
+            WriteError($"The language \"{name}\" is null");
+            return null;
+        }
+
+        public CustomLanguage GetLanguage(TextTranslation.Language language)
+        {
+            if (name != null) {
+                CustomLanguage customLanguage = _customLanguages.Values.FirstOrDefault(cl => cl.Language == language);
+                if (customLanguage != null) {
+                    return customLanguage;
+                }
+            }
+
+            WriteError($"The language {language} is null");
             return null;
         }
 
         public void SetLanguage(string name)
         {
-            currentLanguage = name;
-            TextTranslation.s_theTable.SetLanguage(TextTranslation.Language.ENGLISH);
+            TextTranslation.s_theTable.SetLanguage(GetLanguage(name).Language);
         }
 
         public void RegisterLanguage(ModBehaviour mod, string name, string translationPath, TextTranslation.Language languageToReplace)
@@ -43,10 +65,9 @@ namespace LocalizationUtility
             {
                 WriteLine($"Registering new language {name}");
 
-                _customLanguages[name] = new CustomLanguage(name, translationPath, mod, languageToReplace);
-
-                // For now it only supports one language mod at a time
-                currentLanguage = name;
+                TextTranslation.Language newLanguage = (hasAnyCustomLanguages ? _customLanguages.Values.Max(cl => cl.Language) : vanillaLanguages.Max()) + 1;
+                
+                _customLanguages[name] = new CustomLanguage(name, newLanguage, translationPath, mod, languageToReplace);
             }
             catch(Exception ex)
             {
@@ -78,6 +99,30 @@ namespace LocalizationUtility
             }
         }
 
+        public void SetLanguageDefaultFontSpacing(string name, float defaultFontSpacing)
+        {
+            try
+            {
+                _customLanguages[name].SetDefaultFontSpacing(defaultFontSpacing);
+            }
+            catch (Exception ex)
+            {
+                WriteError($"Failed to set default font spacing for language. {ex}");
+            }
+        }
+
+        public void SetLanguageFontSizeModifier(string name, float fontSizeModifier)
+        {
+            try
+            {
+                _customLanguages[name].SetFontSizeModifier(fontSizeModifier);
+            }
+            catch (Exception ex)
+            {
+                WriteError($"Failed to set font size modifier for language. {ex}");
+            }
+        }
+
         private void Awake()
         {
             Instance = this;
@@ -96,5 +141,9 @@ namespace LocalizationUtility
         }
 
         public static void WriteError(string msg) => WriteLine(msg, MessageType.Error);
+
+        public static LanguageSaveFile Load() => Instance.ModHelper.Storage.Load<LanguageSaveFile>("languageSave.json") ?? LanguageSaveFile.DEFAULT;
+
+        public static void Save(LanguageSaveFile save) => Instance.ModHelper.Storage.Save(save ?? LanguageSaveFile.DEFAULT, "languageSave.json");
     }
 }
