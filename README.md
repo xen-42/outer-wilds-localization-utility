@@ -1,4 +1,4 @@
-# Outer Wilds Translation Mod Template
+# Outer Wilds Translation Mod Utility
 
 This project is meant to have common code required for translation mods.
 
