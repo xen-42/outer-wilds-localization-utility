@@ -12,8 +12,6 @@ namespace LocalizationUtility
     {
         public static LocalizationUtility Instance;
 
-        private static readonly HashSet<TextTranslation.Language> vanillaLanguages = new HashSet<TextTranslation.Language>(Enum.GetValues(typeof(TextTranslation.Language)).Cast<TextTranslation.Language>());
-        
         public static TextTranslation.Language languageToReplace => Instance.GetLanguage().LanguageToReplace;
 
         internal Dictionary<string, CustomLanguage> _customLanguages = new();
@@ -27,7 +25,7 @@ namespace LocalizationUtility
 
         internal static bool IsVanillaLanguage() => IsVanillaLanguage(TextTranslation.Get().GetLanguage());
 
-        internal static bool IsVanillaLanguage(TextTranslation.Language language) => vanillaLanguages.Contains(language);
+        internal static bool IsVanillaLanguage(TextTranslation.Language language) => TextTranslation.Language.UNKNOWN <= language && language <= TextTranslation.Language.TOTAL;
 
         public CustomLanguage GetLanguage() => GetLanguage(TextTranslation.Get().GetLanguage());
 
