@@ -24,6 +24,7 @@ namespace LocalizationUtility
             if(mod != null)
             {
                 TranslationPath = mod.ModHelper.Manifest.ModFolderPath + translationPath;
+                return;
             }
             TranslationPath = translationPath;
         }
