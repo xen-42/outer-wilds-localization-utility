@@ -19,8 +19,13 @@ namespace LocalizationUtility
         {
             Name = name;
             Language = language;
-            TranslationPath = mod.ModHelper.Manifest.ModFolderPath + translationPath;
             LanguageToReplace = languageToReplace;
+
+            if(mod != null)
+            {
+                TranslationPath = mod.ModHelper.Manifest.ModFolderPath + translationPath;
+            }
+            TranslationPath = translationPath;
         }
 
         public void AddFont(string assetBundlePath, string fontPath, ModBehaviour mod)

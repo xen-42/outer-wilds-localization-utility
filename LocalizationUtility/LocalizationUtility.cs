@@ -18,7 +18,7 @@ namespace LocalizationUtility
 
         internal Dictionary<string, CustomLanguage> _customLanguages = new();
 
-        internal bool hasAnyCustomLanguages => _customLanguages.Count > 0;
+        internal bool hasAnyCustomLanguages => _customLanguages.Count - vanillaLanguages.Count > 0;
 
         public override object GetApi()
         {
@@ -41,6 +41,16 @@ namespace LocalizationUtility
             return null;
         }
 
+        public bool TryGetLanguage(string name, out CustomLanguage customLanguage)
+        {
+            if (name != null && _customLanguages.TryGetValue(name, out customLanguage))
+            {
+                return true;
+            }
+            customLanguage = null;
+            return false;
+        }
+
         public CustomLanguage GetLanguage(TextTranslation.Language language)
         {
             if (name != null) {
@@ -53,15 +63,14 @@ namespace LocalizationUtility
             WriteError($"The language {language} is null");
             return null;
         }
-        public bool TryGetLanguage(TextTranslation.Language language, out CustomLanguage lang)
+        public bool TryGetLanguage(TextTranslation.Language language, out CustomLanguage customLanguage)
         {
-            lang = null;
+            customLanguage = null;
             if (name != null)
             {
-                CustomLanguage customLanguage = _customLanguages.Values.FirstOrDefault(cl => cl.Language == language);
+                customLanguage = _customLanguages.Values.FirstOrDefault(cl => cl.Language == language);
                 if (customLanguage != null)
                 {
-                    lang = customLanguage;
                     return true;
                 }
             }
@@ -84,11 +93,31 @@ namespace LocalizationUtility
                 CustomLanguage customLanguage = new CustomLanguage(name, newLanguage, translationPath, mod, languageToReplace);
                 _customLanguages[name] = customLanguage;
 
-                TextTranslationPatches.AddNewTranslation(customLanguage);
+                TextTranslationPatches.AddNewTranslation(customLanguage, customLanguage.TranslationPath);
             }
             catch(Exception ex)
             {
                 WriteError($"Failed to register language. {ex}");
+            }
+        }
+
+        public void AddTranslation(ModBehaviour mod, string name, string translationPath)
+        {
+            try
+            {
+                WriteLine($"Adding translations to language {name}");
+
+                if (TryGetLanguage(name, out var customLanguage))
+                {
+                    TextTranslationPatches.AddNewTranslation(customLanguage, mod.ModHelper.Manifest.ModFolderPath + translationPath);
+                    return;
+                }
+                WriteError($"The custom language {name} isn't registered yet");
+
+            }
+            catch (Exception ex)
+            {
+                WriteError($"Failed to add translation to language {name}. {ex}");
             }
         }
 
@@ -143,6 +172,12 @@ namespace LocalizationUtility
         private void Awake()
         {
             Instance = this;
+
+            foreach(var lang in vanillaLanguages) //Adds the vanilla languages so we can add translations to it with AddTranslation
+            {
+                string languageName = lang.ToString();
+                _customLanguages[languageName] = new CustomLanguage(languageName, lang, "", null, lang);
+            }
         }
 
         private void Start()

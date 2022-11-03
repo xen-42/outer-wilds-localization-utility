@@ -14,19 +14,19 @@ namespace LocalizationUtility
         //Maybe instead of storing TextTranslation.TranslationTable_XML store, which work more like dictionaries TextTranslation.TranslationTable
         private static Dictionary<TextTranslation.Language, TextTranslation.TranslationTable_XML> translationTables = new Dictionary<TextTranslation.Language, TextTranslation.TranslationTable_XML>();
 
-        public static void AddNewTranslation(CustomLanguage language) 
+        public static void AddNewTranslation(CustomLanguage language, string translationPath) 
         {
-            LocalizationUtility.WriteLine($"Storing translation of {language.Language} from {language.TranslationPath}");
+            LocalizationUtility.WriteLine($"Storing translation for {language.Language} from {translationPath}");
             try
             {
                 var xmlDoc = new XmlDocument();
-                xmlDoc.LoadXml(ReadAndRemoveByteOrderMarkFromPath(language.TranslationPath));
+                xmlDoc.LoadXml(ReadAndRemoveByteOrderMarkFromPath(translationPath));
 
                 var translationTableNode = xmlDoc.SelectSingleNode("TranslationTable_XML");
 
                 if (translationTableNode == null)
                 {
-                    LocalizationUtility.WriteError($"TranslationTable_XML could not be found in translation file for language {language.Name}");
+                    LocalizationUtility.WriteError($"TranslationTable_XML could not be found in translation file in {translationPath} for language {language.Name}");
                     return;
                 }
 
@@ -72,7 +72,7 @@ namespace LocalizationUtility
             }
             catch (Exception e)
             {
-                LocalizationUtility.WriteError($"Couldn't load translation for language {language.Name}: {e.Message}{e.StackTrace}");
+                LocalizationUtility.WriteError($"Couldn't load translation for language {language.Name} from file in {translationPath}: {e.Message}{e.StackTrace}");
             }
         }
 
