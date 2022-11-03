@@ -131,11 +131,11 @@ namespace LocalizationUtility
             {
                 return;
             }
-
-            LocalizationUtility.WriteLine($"Loading aditional translations for {language.Name}");
             
             if (translationTables.TryGetValue(lang, out var table))
             {
+                LocalizationUtility.WriteLine($"Loading aditional translations for {language.Name}");
+
                 foreach (var pair in table.table)
                     __instance.m_table.theTable[pair.key] = pair.value;
 
