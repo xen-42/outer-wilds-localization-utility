@@ -18,7 +18,7 @@ namespace LocalizationUtility
 
         internal Dictionary<string, CustomLanguage> _customLanguages = new();
 
-        internal bool hasAnyCustomLanguages => _customLanguages.Count - vanillaLanguages.Count > 0;
+        internal bool hasAnyCustomLanguages => _customLanguages.Count((pair) => pair.Value.IsCustom) > 0;
 
         public override object GetApi()
         {
@@ -90,7 +90,7 @@ namespace LocalizationUtility
 
                 TextTranslation.Language newLanguage = (hasAnyCustomLanguages ? _customLanguages.Values.Max(cl => cl.Language) : vanillaLanguages.Max()) + 1;
 
-                CustomLanguage customLanguage = new CustomLanguage(name, newLanguage, translationPath, mod, languageToReplace);
+                CustomLanguage customLanguage = new CustomLanguage(name,true, newLanguage, translationPath, mod, languageToReplace);
                 _customLanguages[name] = customLanguage;
 
                 TextTranslationPatches.AddNewTranslation(customLanguage, customLanguage.TranslationPath);
@@ -176,7 +176,7 @@ namespace LocalizationUtility
             foreach(var lang in vanillaLanguages) //Adds the vanilla languages so we can add translations to it with AddTranslation
             {
                 string languageName = lang.ToString();
-                _customLanguages[languageName] = new CustomLanguage(languageName, lang, "", null, lang);
+                _customLanguages[languageName] = new CustomLanguage(languageName,false, lang, "", null, lang);
             }
         }
 

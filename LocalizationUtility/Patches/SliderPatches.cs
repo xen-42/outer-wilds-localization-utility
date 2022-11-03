@@ -21,7 +21,7 @@ namespace LocalizationUtility
             }
             // Set to the first custom language
             else if (LocalizationUtility.Instance.hasAnyCustomLanguages)
-                settingsData.language = LocalizationUtility.Instance._customLanguages.Values.FirstOrDefault().Language;
+                settingsData.language = LocalizationUtility.Instance._customLanguages.Values.FirstOrDefault((pair)=>pair.IsCustom).Language;
         }
 
         /// <summary>
@@ -85,10 +85,15 @@ namespace LocalizationUtility
         {
             if (LocalizationUtility.Instance.hasAnyCustomLanguages)
             {
-                Array.Resize(ref __result, (int)LocalizationUtility.Instance._customLanguages.Values.Max(cl => cl.Language) + 1);
+                Array.Resize(ref __result, (int)LocalizationUtility.Instance._customLanguages.Values.Max(cl => (int)cl.Language * (cl.IsCustom? 1 : 0)) + 1);
                 __result[(int)TextTranslation.Language.TOTAL] = "Total";
                 foreach (var profile in LocalizationUtility.Instance._customLanguages.Values)
-                    __result[(int)profile.Language] = profile.Name;
+                {
+                    if (profile.IsCustom)
+                    {
+                        __result[(int)profile.Language] = profile.Name;
+                    }
+                }
             }
         }
 

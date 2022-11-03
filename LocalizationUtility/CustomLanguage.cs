@@ -14,14 +14,17 @@ namespace LocalizationUtility
         public float DefaultFontSpacing { get; private set; } = 1;
         public float FontSizeModifier { get; private set; } = 1;
         public TextTranslation.Language LanguageToReplace { get; private set; }
+        public bool IsCustom { get; private set; }
 
-        public CustomLanguage(string name, TextTranslation.Language language, string translationPath, ModBehaviour mod, TextTranslation.Language languageToReplace)
+        public CustomLanguage(string name, bool isCustom, TextTranslation.Language language, string translationPath, ModBehaviour mod, TextTranslation.Language languageToReplace)
         {
             Name = name;
+            IsCustom = isCustom;
+
             Language = language;
             LanguageToReplace = languageToReplace;
 
-            if(mod != null)
+            if (mod != null)
             {
                 TranslationPath = mod.ModHelper.Manifest.ModFolderPath + translationPath;
                 return;
