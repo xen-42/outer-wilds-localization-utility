@@ -30,11 +30,10 @@ namespace LocalizationUtility
                     return;
                 }
 
-                var translationTable_XML = translationTables[language.Language];
-
-                if(translationTable_XML == null) 
+                if(!translationTables.TryGetValue(language.Language, out var translationTable_XML)) 
                 {
                     translationTable_XML = new TextTranslation.TranslationTable_XML();
+                    translationTables[language.Language] = translationTable_XML;
                 }
 
                 // Add regular text to the table
@@ -79,18 +78,25 @@ namespace LocalizationUtility
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation.SetLanguage))]
-        public static bool TextTranslation_SetLanguage(ref TextTranslation.Language lang, TextTranslation __instance)
+        public static bool TextTranslation_SetLanguage_Prefix(ref TextTranslation.Language lang, TextTranslation __instance)
         {
-            var language = LocalizationUtility.Instance.GetLanguage(lang);
-            
-            if (language == null)
+            if (LocalizationUtility.IsVanillaLanguage(lang)) return true; //We change through TextTranslation_SetLanguage custom languages
+            //And vanilla languages with TextTranslation_SetLanguage_Postfix
+
+
+            if (!LocalizationUtility.Instance.TryGetLanguage(lang, out var language))
             {
+                LocalizationUtility.WriteError($"The language {language} doesn't have a translation table");
                 lang = TextTranslation.Language.UNKNOWN;
                 return true;
             }
 
             __instance.m_language = language.Language;
-            LocalizationUtility.WriteLine($"Loading translation for {language.Language}");
+            LocalizationUtility.WriteLine($"Loading translation for {language.Name}");
+            if (__instance.m_table == null) 
+            {
+                __instance.m_table.theTable = new Dictionary<string, string>();
+            }
 
             //Now not only we can edit vanila translation tables, but multiple mods can edit the same language table, as long as the keys are unique
             if (translationTables.TryGetValue(lang, out var table)) 
@@ -111,6 +117,34 @@ namespace LocalizationUtility
                 onLanguageChanged.DynamicInvoke();
             }
             return false;
+        }
+
+        //Maybe call this when OnLanguageChanged gets called, but could cause issues, I really don't know
+        //A *transpiler* could help to call this right after the xml is loaded (Xen would kill me)
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation.SetLanguage))]
+        public static void TextTranslation_SetLanguage_Postfix(ref TextTranslation.Language lang, TextTranslation __instance)
+        {
+            if (lang == TextTranslation.Language.UNKNOWN ||
+                !LocalizationUtility.IsVanillaLanguage(lang) ||
+                !LocalizationUtility.Instance.TryGetLanguage(lang, out var language))
+            {
+                return;
+            }
+
+            LocalizationUtility.WriteLine($"Loading aditional translations for {language.Name}");
+            
+            if (translationTables.TryGetValue(lang, out var table))
+            {
+                foreach (var pair in table.table)
+                    __instance.m_table.theTable[pair.key] = pair.value;
+
+                foreach (var pair in table.table_shipLog)
+                    __instance.m_table.theShipLogTable[pair.key] = pair.value;
+
+                foreach (var pair in table.table_ui)
+                    __instance.m_table.theUITable[pair.key] = pair.value;
+            }
         }
 
 

@@ -53,6 +53,20 @@ namespace LocalizationUtility
             WriteError($"The language {language} is null");
             return null;
         }
+        public bool TryGetLanguage(TextTranslation.Language language, out CustomLanguage lang)
+        {
+            lang = null;
+            if (name != null)
+            {
+                CustomLanguage customLanguage = _customLanguages.Values.FirstOrDefault(cl => cl.Language == language);
+                if (customLanguage != null)
+                {
+                    lang = customLanguage;
+                    return true;
+                }
+            }
+            return false;
+        }
 
         public void SetLanguage(string name)
         {
