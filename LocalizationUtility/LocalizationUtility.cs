@@ -66,8 +66,11 @@ namespace LocalizationUtility
                 WriteLine($"Registering new language {name}");
 
                 TextTranslation.Language newLanguage = (hasAnyCustomLanguages ? _customLanguages.Values.Max(cl => cl.Language) : vanillaLanguages.Max()) + 1;
-                
-                _customLanguages[name] = new CustomLanguage(name, newLanguage, translationPath, mod, languageToReplace);
+
+                CustomLanguage customLanguage = new CustomLanguage(name, newLanguage, translationPath, mod, languageToReplace);
+                _customLanguages[name] = customLanguage;
+
+                TextTranslationPatches.AddNewTranslation(customLanguage);
             }
             catch(Exception ex)
             {
