@@ -121,6 +121,25 @@ namespace LocalizationUtility
             }
         }
         #region NonXMLTranslationAdders
+        public void AddTranslation(string name, KeyValuePair<string, string>[] regularEntries, KeyValuePair<string, string>[] shipLogEntries, KeyValuePair<int, string>[] uiEntries)
+        {
+            try
+            {
+                WriteLine($"Adding translations to language {name}");
+
+                if (TryGetLanguage(name, out var customLanguage))
+                {
+                    TextTranslationPatches.AddNewTranslation(customLanguage, regularEntries, shipLogEntries, uiEntries);
+                    return;
+                }
+                WriteError($"The custom language {name} isn't registered yet");
+
+            }
+            catch (Exception ex)
+            {
+                WriteError($"Failed to add translation to language {name}. {ex}");
+            }
+        }
         public void AddRegularTranslation(string name, string commonKeyPrefix, params string[] entries)
         {
             AddRegularTranslation(name, TextTranslationPatches.GenerateKeyValuePairsForEntries(commonKeyPrefix, entries));

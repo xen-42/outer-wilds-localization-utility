@@ -10,6 +10,8 @@ namespace LocalizationUtility
             => LocalizationUtility.Instance.RegisterLanguage(mod, name, translationPath, TextTranslation.Language.ENGLISH);
         public void RegisterLanguage(ModBehaviour mod, string name, string translationPath, string languageToReplace)
             => LocalizationUtility.Instance.RegisterLanguage(mod, name, translationPath, (TextTranslation.Language) Enum.Parse(typeof(TextTranslation.Language), languageToReplace, true));
+        public void AddTranslation(string name, KeyValuePair<string, string>[] regularEntries, KeyValuePair<string, string>[] shipLogEntries, KeyValuePair<int, string>[] uiEntries)
+            => LocalizationUtility.Instance.AddTranslation(name, regularEntries, shipLogEntries, uiEntries);
         public void AddTranslation(ModBehaviour mod, string name, string translationPath)
             => LocalizationUtility.Instance.AddTranslation(mod, name, translationPath);
         #region AddRegularTranslation

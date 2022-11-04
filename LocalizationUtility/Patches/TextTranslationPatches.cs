@@ -87,6 +87,55 @@ namespace LocalizationUtility
             }
             return pairs;
         }
+        public static void AddNewTranslation(CustomLanguage language, KeyValuePair<string, string>[] regularEntries, KeyValuePair<string, string>[] shipLogEntries, KeyValuePair<int, string>[] uiEntries)
+        {
+            LocalizationUtility.WriteLine($"Storing translations for {language.Language}");
+            try
+            {
+                if (!translationTables.TryGetValue(language.Language, out var translationTable_XML))
+                {
+                    translationTable_XML = new TextTranslation.TranslationTable_XML();
+                    translationTables[language.Language] = translationTable_XML;
+                }
+
+                // Add regular text to the table
+                foreach (var pair in regularEntries)
+                {
+                    var key = pair.Key;
+                    var value = pair.Value;
+
+                    if (language.Fixer != null) value = language.Fixer(value);
+
+                    translationTable_XML.table.Add(new TextTranslation.TranslationTableEntry(key, value));
+                }
+
+                // Add ship log entries
+                foreach (var pair in shipLogEntries)
+                {
+                    var key = pair.Key;
+                    var value = pair.Value;
+
+                    if (language.Fixer != null) value = language.Fixer(value);
+
+                    translationTable_XML.table_shipLog.Add(new TextTranslation.TranslationTableEntry(key, value));
+                }
+
+                // Add UI
+                foreach (var pair in uiEntries)
+                {
+                    var key = pair.Key;
+                    var value = pair.Value;
+
+                    if (language.Fixer != null) value = language.Fixer(value);
+
+                    translationTable_XML.table_ui.Add(new TextTranslation.TranslationTableEntryUI(key, value));
+                }
+            }
+            catch (Exception e)
+            {
+                LocalizationUtility.WriteError($"Couldn't store translation for language {language.Name}: {e.Message}{e.StackTrace}");
+            }
+        }
         public static void AddEntriesToRegularTranslationTable(CustomLanguage language, params KeyValuePair<string, string>[] entries)
         {
             LocalizationUtility.WriteLine($"Storing translation for {language.Language} for regular translations");
