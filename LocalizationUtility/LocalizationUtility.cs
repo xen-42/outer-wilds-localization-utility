@@ -120,7 +120,73 @@ namespace LocalizationUtility
                 WriteError($"Failed to add translation to language {name}. {ex}");
             }
         }
+        #region NonXMLTranslationAdders
+        public void AddRegularTranslation(string name, string commonKeyPrefix, params string[] entries)
+        {
+            AddRegularTranslation(name, TextTranslationPatches.GenerateKeyValuePairsForEntries(commonKeyPrefix, entries));
+        }
+        public void AddRegularTranslation(string name, params KeyValuePair<string, string>[] entries)
+        {
+            try
+            {
+                WriteLine($"Adding regular translations to language {name}");
 
+                if (TryGetLanguage(name, out var customLanguage))
+                {
+                    TextTranslationPatches.AddEntriesToRegularTranslationTable(customLanguage, entries);
+                    return;
+                }
+                WriteError($"The custom language {name} isn't registered yet");
+
+            }
+            catch (Exception ex)
+            {
+                WriteError($"Failed to add regular translations to language {name}. {ex}");
+            }
+        }
+        public void AddShiplogTranslation(string name, string commonKeyPrefix, params string[] entries)
+        {
+            AddShiplogTranslation(name, TextTranslationPatches.GenerateKeyValuePairsForEntries(commonKeyPrefix, entries));
+        }
+        public void AddShiplogTranslation(string name, params KeyValuePair<string, string>[] entries)
+        {
+            try
+            {
+                WriteLine($"Adding shiplog translations to language {name}");
+
+                if (TryGetLanguage(name, out var customLanguage))
+                {
+                    TextTranslationPatches.AddEntriesToShiplogTranslationTable(customLanguage, entries);
+                    return;
+                }
+                WriteError($"The custom language {name} isn't registered yet");
+
+            }
+            catch (Exception ex)
+            {
+                WriteError($"Failed to add shiplog translations to language {name}. {ex}");
+            }
+        }
+        public void AddUITranslation(string name, params KeyValuePair<int, string>[] entries)
+        {
+            try
+            {
+                WriteLine($"Adding UI translations to language {name}");
+
+                if (TryGetLanguage(name, out var customLanguage))
+                {
+                    TextTranslationPatches.AddEntriesToUITranslationTable(customLanguage, entries);
+                    return;
+                }
+                WriteError($"The custom language {name} isn't registered yet");
+
+            }
+            catch (Exception ex)
+            {
+                WriteError($"Failed to add UI translations to language {name}. {ex}");
+            }
+        }
+        #endregion
         public void AddLanguageFont(ModBehaviour mod, string name, string assetBundlePath, string fontPath)
         {
             try

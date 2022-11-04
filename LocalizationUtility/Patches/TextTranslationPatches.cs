@@ -76,6 +76,101 @@ namespace LocalizationUtility
             }
         }
 
+        #region NonXMLTranslationAdders
+        public static KeyValuePair<string, string>[] GenerateKeyValuePairsForEntries(string commonKeyPrefix, params string[] entries)
+        {
+            KeyValuePair<string, string>[] pairs = new KeyValuePair<string, string>[entries.Length];
+
+            for (int i = 0; i < entries.Length; i++)
+            {
+                pairs[i] = new KeyValuePair<string, string>(commonKeyPrefix + entries[i], entries[i]);
+            }
+            return pairs;
+        }
+        public static void AddEntriesToRegularTranslationTable(CustomLanguage language, params KeyValuePair<string, string>[] entries)
+        {
+            LocalizationUtility.WriteLine($"Storing translation for {language.Language} for regular translations");
+            try
+            {
+                if (!translationTables.TryGetValue(language.Language, out var translationTable_XML))
+                {
+                    translationTable_XML = new TextTranslation.TranslationTable_XML();
+                    translationTables[language.Language] = translationTable_XML;
+                }
+
+                // Add regular text to the table
+                foreach (var entry in entries)
+                {
+                    var key = entry.Key;
+                    var value = entry.Value;
+
+                    if (language.Fixer != null) value = language.Fixer(value);
+
+                    translationTable_XML.table.Add(new TextTranslation.TranslationTableEntry(key, value));
+                }
+            }
+            catch (Exception e)
+            {
+                LocalizationUtility.WriteError($"Couldn't store translations for language {language.Name}: {e.Message}{e.StackTrace}");
+            }
+        }
+        public static void AddEntriesToShiplogTranslationTable(CustomLanguage language, params KeyValuePair<string, string>[] entries)
+        {
+            LocalizationUtility.WriteLine($"Storing translation for {language.Language} for shiplog translations");
+            try
+            {
+                if (!translationTables.TryGetValue(language.Language, out var translationTable_XML))
+                {
+                    translationTable_XML = new TextTranslation.TranslationTable_XML();
+                    translationTables[language.Language] = translationTable_XML;
+                }
+
+                // Add ship log entries
+                foreach (var entry in entries)
+                {
+                    var key = entry.Key;
+                    var value = entry.Value;
+
+                    if (language.Fixer != null) value = language.Fixer(value);
+
+                    translationTable_XML.table_shipLog.Add(new TextTranslation.TranslationTableEntry(key, value));
+                }
+            }
+            catch (Exception e)
+            {
+                LocalizationUtility.WriteError($"Couldn't add translation for language {language.Name}: {e.Message}{e.StackTrace}");
+            }
+        }
+
+        public static void AddEntriesToUITranslationTable(CustomLanguage language, params KeyValuePair<int, string>[] entries)
+        {
+            LocalizationUtility.WriteLine($"Storing translation for {language.Language} for UI translations");
+            try
+            {
+                if (!translationTables.TryGetValue(language.Language, out var translationTable_XML))
+                {
+                    translationTable_XML = new TextTranslation.TranslationTable_XML();
+                    translationTables[language.Language] = translationTable_XML;
+                }
+
+                // Add UI
+                foreach (var entry in entries)
+                {
+                    var key = entry.Key;
+                    var value = entry.Value;
+
+                    if (language.Fixer != null) value = language.Fixer(value);
+
+                    translationTable_XML.table_ui.Add(new TextTranslation.TranslationTableEntryUI(key, value));
+                }
+            }
+            catch (Exception e)
+            {
+                LocalizationUtility.WriteError($"Couldn't add translation for language {language.Name}: {e.Message}{e.StackTrace}");
+            }
+        }
+        #endregion
+
         [HarmonyPrefix]
         [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation.SetLanguage))]
         public static bool TextTranslation_SetLanguage_Prefix(ref TextTranslation.Language lang, TextTranslation __instance)
