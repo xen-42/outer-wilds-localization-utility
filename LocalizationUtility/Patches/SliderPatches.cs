@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using OWML.Utils;
 using System;
 using System.Linq;
 using UnityEngine;
@@ -85,7 +86,7 @@ namespace LocalizationUtility
         {
             if (LocalizationUtility.Instance.hasAnyCustomLanguages)
             {
-                Array.Resize(ref __result, (int)LocalizationUtility.Instance._customLanguages.Values.Max(cl => cl.Language) + 1);
+                Array.Resize(ref __result, (int)EnumUtils.GetMaxValue<TextTranslation.Language>() + 1);
                 __result[(int)TextTranslation.Language.TOTAL] = "Total";
                 foreach (var profile in LocalizationUtility.Instance._customLanguages.Values)
                     __result[(int)profile.Language] = profile.Name;
