@@ -13,11 +13,12 @@ namespace LocalizationUtility
     {
         public static LocalizationUtility Instance;
 
-        public static TextTranslation.Language languageToReplace => Instance.GetLanguage().LanguageToReplace;
+        private static readonly HashSet<TextTranslation.Language> vanillaLanguages = new(Enum.GetValues(typeof(TextTranslation.Language)).Cast<TextTranslation.Language>());
+        public static TextTranslation.Language LanguageToReplace => Instance.GetLanguage().LanguageToReplace;
 
         internal Dictionary<string, CustomLanguage> _customLanguages = new();
 
-        internal bool hasAnyCustomLanguages => _customLanguages.Count > 0;
+        internal bool HasAnyCustomLanguages => _customLanguages.Count((pair) => pair.Value.IsCustom) > 0;
 
         public override object GetApi()
         {
@@ -30,14 +31,24 @@ namespace LocalizationUtility
 
         public CustomLanguage GetLanguage() => GetLanguage(TextTranslation.Get().GetLanguage());
 
-        public CustomLanguage GetLanguage(string name)
+        public CustomLanguage GetLanguage(string languageName)
         {
-            if (name != null && _customLanguages.TryGetValue(name, out var customLanguage)) {
+            if (languageName != null && _customLanguages.TryGetValue(languageName, out var customLanguage)) {
                 return customLanguage;
             }
 
-            WriteError($"The language \"{name}\" is null");
+            WriteError($"The language \"{languageName}\" is null");
             return null;
+        }
+
+        public bool TryGetLanguage(string languageName, out CustomLanguage customLanguage)
+        {
+            if (languageName != null && _customLanguages.TryGetValue(languageName, out customLanguage))
+            {
+                return true;
+            }
+            customLanguage = null;
+            return false;
         }
 
         public CustomLanguage GetLanguage(TextTranslation.Language language)
@@ -52,19 +63,37 @@ namespace LocalizationUtility
             WriteError($"The language {language} is null");
             return null;
         }
-
-        public void SetLanguage(string name)
+        public bool TryGetLanguage(TextTranslation.Language language, out CustomLanguage customLanguage)
         {
-            TextTranslation.s_theTable.SetLanguage(GetLanguage(name).Language);
+            customLanguage = null;
+            if (name != null)
+            {
+                customLanguage = _customLanguages.Values.FirstOrDefault(cl => cl.Language == language);
+                if (customLanguage != null)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
-        public void RegisterLanguage(ModBehaviour mod, string name, string translationPath, TextTranslation.Language languageToReplace)
+        public void SetLanguage(string languageName)
+        {
+            TextTranslation.s_theTable.SetLanguage(GetLanguage(languageName).Language);
+        }
+
+        public void RegisterLanguage(ModBehaviour mod, string languageName, string translationPath, TextTranslation.Language languageToReplace)
         {
             try
             {
-                WriteLine($"Registering new language {name}");
+                WriteLine($"Registering new language {languageName}");
 
-                _customLanguages[name] = new CustomLanguage(name, EnumUtils.Create<TextTranslation.Language>(name), translationPath, mod, languageToReplace);
+                TextTranslation.Language newLanguage = EnumUtils.Create<TextTranslation.Language>(languageName);
+
+                CustomLanguage customLanguage = new(languageName,true, newLanguage, languageToReplace);
+                _customLanguages[languageName] = customLanguage;
+
+                customLanguage.AddTranslation(mod.ModHelper.Manifest.ModFolderPath  + translationPath);
             }
             catch(Exception ex)
             {
@@ -72,11 +101,116 @@ namespace LocalizationUtility
             }
         }
 
-        public void AddLanguageFont(ModBehaviour mod, string name, string assetBundlePath, string fontPath)
+        public void AddTranslation(ModBehaviour mod, string languageName, string translationPath)
         {
             try
             {
-                _customLanguages[name].AddFont(assetBundlePath, fontPath, mod);
+                WriteLine($"Adding translations to language {languageName}");
+
+                if (TryGetLanguage(languageName, out var customLanguage))
+                {
+                    customLanguage.AddTranslation(mod.ModHelper.Manifest.ModFolderPath + translationPath);
+                    return;
+                }
+                WriteError($"The custom language {languageName} isn't registered yet");
+
+            }
+            catch (Exception ex)
+            {
+                WriteError($"Failed to add translation to language {languageName}. {ex}");
+            }
+        }
+        #region NonXMLTranslationAdders
+        public void AddTranslation(string languageName, KeyValuePair<string, string>[] regularEntries, KeyValuePair<string, string>[] shipLogEntries, KeyValuePair<int, string>[] uiEntries)
+        {
+            try
+            {
+                WriteLine($"Adding translations to language {languageName}");
+
+                if (TryGetLanguage(languageName, out var customLanguage))
+                {
+                    customLanguage.AddTranslation(regularEntries, shipLogEntries, uiEntries);
+                    return;
+                }
+                WriteError($"The custom language {languageName} isn't registered yet");
+
+            }
+            catch (Exception ex)
+            {
+                WriteError($"Failed to add translation to language {languageName}. {ex}");
+            }
+        }
+        public void AddRegularTranslation(string languageName, string commonKeyPrefix, params string[] entries)
+        {
+            AddRegularTranslation(languageName, CustomLanguage.GenerateKeyValuePairsForEntries(commonKeyPrefix, entries));
+        }
+        public void AddRegularTranslation(string languageName, params KeyValuePair<string, string>[] entries)
+        {
+            try
+            {
+                WriteLine($"Adding regular translations to language {languageName}");
+
+                if (TryGetLanguage(languageName, out var customLanguage))
+                {
+                    customLanguage.AddEntriesToRegularTranslationTable(entries);
+                    return;
+                }
+                WriteError($"The custom language {languageName} isn't registered yet");
+
+            }
+            catch (Exception ex)
+            {
+                WriteError($"Failed to add regular translations to language {languageName}. {ex}");
+            }
+        }
+        public void AddShiplogTranslation(string languageName, string commonKeyPrefix, params string[] entries)
+        {
+            AddShiplogTranslation(languageName, CustomLanguage.GenerateKeyValuePairsForEntries(commonKeyPrefix, entries));
+        }
+        public void AddShiplogTranslation(string languageName, params KeyValuePair<string, string>[] entries)
+        {
+            try
+            {
+                WriteLine($"Adding shiplog translations to language {languageName}");
+
+                if (TryGetLanguage(languageName, out var customLanguage))
+                {
+                    customLanguage.AddEntriesToShiplogTranslationTable(entries);
+                    return;
+                }
+                WriteError($"The custom language {languageName} isn't registered yet");
+
+            }
+            catch (Exception ex)
+            {
+                WriteError($"Failed to add shiplog translations to language {languageName}. {ex}");
+            }
+        }
+        public void AddUITranslation(string languageName, params KeyValuePair<int, string>[] entries)
+        {
+            try
+            {
+                WriteLine($"Adding UI translations to language {languageName}");
+
+                if (TryGetLanguage(languageName, out var customLanguage))
+                {
+                    customLanguage.AddEntriesToUITranslationTable(entries);
+                    return;
+                }
+                WriteError($"The custom language {languageName} isn't registered yet");
+
+            }
+            catch (Exception ex)
+            {
+                WriteError($"Failed to add UI translations to language {languageName}. {ex}");
+            }
+        }
+        #endregion
+        public void AddLanguageFont(ModBehaviour mod, string languageName, string assetBundlePath, string fontPath)
+        {
+            try
+            {
+                _customLanguages[languageName].AddFont(assetBundlePath, fontPath, mod);
             }
             catch (Exception ex)
             {
@@ -84,11 +218,11 @@ namespace LocalizationUtility
             }
         }
 
-        public void AddLanguageFixer(string name, Func<string, string> fixer)
+        public void AddLanguageFixer(string languageName, Func<string, string> fixer)
         {
             try
             {
-                _customLanguages[name].AddFixer(fixer);
+                _customLanguages[languageName].AddFixer(fixer);
             }
             catch (Exception ex)
             {
@@ -96,11 +230,11 @@ namespace LocalizationUtility
             }
         }
 
-        public void SetLanguageDefaultFontSpacing(string name, float defaultFontSpacing)
+        public void SetLanguageDefaultFontSpacing(string languageName, float defaultFontSpacing)
         {
             try
             {
-                _customLanguages[name].SetDefaultFontSpacing(defaultFontSpacing);
+                _customLanguages[languageName].SetDefaultFontSpacing(defaultFontSpacing);
             }
             catch (Exception ex)
             {
@@ -108,11 +242,11 @@ namespace LocalizationUtility
             }
         }
 
-        public void SetLanguageFontSizeModifier(string name, float fontSizeModifier)
+        public void SetLanguageFontSizeModifier(string languageName, float fontSizeModifier)
         {
             try
             {
-                _customLanguages[name].SetFontSizeModifier(fontSizeModifier);
+                _customLanguages[languageName].SetFontSizeModifier(fontSizeModifier);
             }
             catch (Exception ex)
             {
@@ -123,6 +257,12 @@ namespace LocalizationUtility
         private void Awake()
         {
             Instance = this;
+
+            foreach(var lang in vanillaLanguages) //Adds the vanilla languages so we can add translations to it with AddTranslation
+            {
+                string languageName = lang.ToString();
+                _customLanguages[languageName] = new CustomLanguage(languageName,false, lang, lang);
+            }
         }
 
         private void Start()
