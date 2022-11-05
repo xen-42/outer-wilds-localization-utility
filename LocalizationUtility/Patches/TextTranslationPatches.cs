@@ -2,84 +2,132 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Reflection.Emit;
 
 namespace LocalizationUtility
 {
     [HarmonyPatch]
     public static class TextTranslationPatches
     {
-        //Maybe instead of storing TextTranslation.TranslationTable_XML store, which work more like dictionaries TextTranslation.TranslationTable
-        //private static Dictionary<TextTranslation.Language, TextTranslation.TranslationTable_XML> translationTables = new Dictionary<TextTranslation.Language, TextTranslation.TranslationTable_XML>();
+        /*This is what the transpiler in TextTranslation_SetLanguage_Transpiler is doing
+         
+        - (A) Add a check for custom languages in         
+                ...
+	    this.m_language = lang;
+	    this.m_table = null;
+        if(LocalizationUtility.Instance.TryGetLanguage(lang, out _);) goto TABLE_EDITOR
+                ...
+         
+        - (B) Add table editor        
+                             ...
+             xmlNode4.SelectSingleNode("value").InnerText));
+	      }
+	      this.m_table = new TextTranslation.TranslationTable(translationTable_XML);
 
+          TABLE_EDITOR:  LoadLanguageTables(lang, this);
 
-        [HarmonyPrefix]
+	      Resources.UnloadAsset(textAsset);
+                             ...         
+
+        * To do (B)
+         1 - Find                 
+            IL_0230: ldarg.0
+            IL_0231: ldloc.3
+            IL_0232: newobj instance void TextTranslation/TranslationTable::.ctor(class TextTranslation/TranslationTable_XML)
+            IL_0237: stfld class TextTranslation/TranslationTable TextTranslation::m_table         
+        
+         2 - Add table editor after match and create label labelToTableEditing to ldarg.1
+            ldarg.1 
+            ldarg.0
+            EmitDelegate for LoadLanguageTables(lang, instance);
+
+        * To do (A)
+         1 - Find        
+            IL_0011: ldarg.0
+            IL_0012: ldarg.1
+            IL_0013: stfld valuetype TextTranslation/Language TextTranslation::m_language
+
+            IL_0018: ldarg.0
+            IL_0019: ldnull
+            IL_001A: stfld     class TextTranslation/TranslationTable TextTranslation::m_table
+         
+         2 - Add a branch right after match
+            ldarg.1
+            EmitDelegate for  LocalizationUtility.Instance.TryGetLanguage(lang, out _);
+            br.true labelToTableEditing (will skip to the label labelToTableEditing if the result on the delegate is true)
+        */
+        [HarmonyTranspiler]
         [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation.SetLanguage))]
-        public static bool TextTranslation_SetLanguage_Prefix(ref TextTranslation.Language lang, TextTranslation __instance)
+        public static IEnumerable<CodeInstruction> TextTranslation_SetLanguage_Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
         {
-            if (LocalizationUtility.IsVanillaLanguage(lang)) return true; //We change through TextTranslation_SetLanguage custom languages
-            //And vanilla languages with TextTranslation_SetLanguage_Postfix
-
-
-            if (!LocalizationUtility.Instance.TryGetLanguage(lang, out var language))
+            try
             {
-                LocalizationUtility.WriteError($"The language {language} doesn't have a translation table");
-                lang = TextTranslation.Language.UNKNOWN;
-                return true;
-            }
+                return new CodeMatcher(instructions, generator)
+                .MatchForward(true, //This searches for part (B) ---------------------------
+                   new CodeMatch(OpCodes.Ldarg_0),
+                   new CodeMatch(OpCodes.Ldloc_3),
+                   new CodeMatch(OpCodes.Newobj),
+                   new CodeMatch(i => i.opcode == OpCodes.Stfld && ((FieldInfo)i.operand).Name == "m_table")
+                ).ThrowIfInvalid("Match for skiping method failed") //----------------------
+                .Advance(1) //This adds part (B) and creates a label for (A) -------------------------------------
+                .InsertAndAdvance(
+                    new CodeInstruction(OpCodes.Ldarg_1),
+                   new CodeInstruction(OpCodes.Ldarg_0),
+                   Transpilers.EmitDelegate<Action<TextTranslation.Language, TextTranslation>>((lang, instance) =>
+                   {
+                       LoadLanguageTables(lang, instance);
+                   })
+                 )
+                .Advance(-2)
+                .CreateLabel(out Label labelToTableEditing) //Creates label to ldarg_1
+                //------------------------------------------------------------------------------------------------
+                .Start().MatchForward(true,//This searches for part (A) ---------------------------
+                   new CodeMatch(OpCodes.Ldarg_0),
+                   new CodeMatch(OpCodes.Ldarg_1),
+                   new CodeMatch(i => i.opcode == OpCodes.Stfld && ((FieldInfo)i.operand).Name == "m_language"),
 
-            __instance.m_language = language.Language;
-            LocalizationUtility.WriteLine($"Loading translation for {language.Name}");
-            if (__instance.m_table == null) 
+                   new CodeMatch(OpCodes.Ldarg_0),
+                   new CodeMatch(OpCodes.Ldnull),
+                   new CodeMatch(i => i.opcode == OpCodes.Stfld && ((FieldInfo)i.operand).Name == "m_table")
+                 ).ThrowIfInvalid("Match for editing translation table failed")//--------------------
+                 .Advance(1).InsertAndAdvance( //This adds part (A) ---------------------------------
+                   new CodeInstruction(OpCodes.Ldarg_1),
+                   Transpilers.EmitDelegate<Func<TextTranslation.Language, bool>>((lang) =>
+                   {
+                       return LocalizationUtility.Instance.TryGetLanguage(lang, out _);
+                   }),
+                   new CodeInstruction(OpCodes.Brtrue, labelToTableEditing) //Skips only if LocalizationUtility.Instance.TryGetLanguage(lang, out _) is true
+                   )//-------------------------------------------------------------------------------
+                .InstructionEnumeration();
+            }
+            catch (Exception ex)
             {
-                __instance.m_table.theTable = new Dictionary<string, string>();
+                LocalizationUtility.WriteError($"Error at transpiler: msg: {ex.Message} source: {ex.Source} stack tree: {ex.StackTrace}");
+                return instructions;
             }
-
-            //Now not only we can edit vanila translation tables, but multiple mods can edit the same language table, as long as the keys are unique
-
-            foreach (var pair in language.TranslationTable.table)
-                __instance.m_table.theTable[pair.key] = pair.value;
-
-            foreach (var pair in language.TranslationTable.table_shipLog)
-                __instance.m_table.theShipLogTable[pair.key] = pair.value;
-
-            foreach (var pair in language.TranslationTable.table_ui)
-                __instance.m_table.theUITable[pair.key] = pair.value;
-
-            var onLanguageChanged = (MulticastDelegate)__instance.GetType().GetField("OnLanguageChanged", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(__instance);
-            if (onLanguageChanged != null)
-            {
-                onLanguageChanged.DynamicInvoke();
-            }
-            return false;
         }
 
-        //Maybe call this when OnLanguageChanged gets called, but could cause issues, I really don't know
-        //A *transpiler* could help to call this right after the xml is loaded (Xen would kill me)
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation.SetLanguage))]
-        public static void TextTranslation_SetLanguage_Postfix(ref TextTranslation.Language lang, TextTranslation __instance)
+        public static void LoadLanguageTables(TextTranslation.Language lang, TextTranslation instance)
         {
-            if (lang == TextTranslation.Language.UNKNOWN ||
-                !LocalizationUtility.IsVanillaLanguage(lang) ||
-                !LocalizationUtility.Instance.TryGetLanguage(lang, out var language))
+            if (LocalizationUtility.Instance.TryGetLanguage(lang, out var language))
             {
-                return;
+                LocalizationUtility.WriteLine($"Loading translations for {language.Name}");
+                if (instance.m_table == null)
+                {
+                    instance.m_table = new TextTranslation.TranslationTable(language.TranslationTable);
+                    return;
+                }
+
+                foreach (var pair in language.TranslationTable.table)
+                    instance.m_table.theTable[pair.key] = pair.value;
+
+                foreach (var pair in language.TranslationTable.table_shipLog)
+                    instance.m_table.theShipLogTable[pair.key] = pair.value;
+
+                foreach (var pair in language.TranslationTable.table_ui)
+                    instance.m_table.theUITable[pair.key] = pair.value;
             }
-
-            LocalizationUtility.WriteLine($"Loading aditional translations for {language.Name}");
-
-            foreach (var pair in language.TranslationTable.table)
-                __instance.m_table.theTable[pair.key] = pair.value;
-
-            foreach (var pair in language.TranslationTable.table_shipLog)
-                __instance.m_table.theShipLogTable[pair.key] = pair.value;
-
-            foreach (var pair in language.TranslationTable.table_ui)
-                __instance.m_table.theUITable[pair.key] = pair.value;
-
-        }
-
-
+        }     
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation._Translate))]
