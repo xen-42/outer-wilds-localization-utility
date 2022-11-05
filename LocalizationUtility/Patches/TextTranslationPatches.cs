@@ -78,7 +78,7 @@ namespace LocalizationUtility
                        LoadLanguageTables(lang, instance);
                    })
                  )
-                .Advance(-2)
+                .Advance(-3)
                 .CreateLabel(out Label labelToTableEditing) //Creates label to ldarg_1
                 //------------------------------------------------------------------------------------------------
                 .Start().MatchForward(true,//This searches for part (A) ---------------------------
