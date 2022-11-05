@@ -15,7 +15,7 @@ namespace LocalizationUtility
                 ...
 	    this.m_language = lang;
 	    this.m_table = null;
-        if(LocalizationUtility.Instance.TryGetLanguage(lang, out _);) goto TABLE_EDITOR
+        if(!LocalizationUtility.IsVanillaLanguage(lang) && LocalizationUtility.Instance.TryGetLanguage(lang, out var language)) goto TABLE_EDITOR
                 ...
          
         - (B) Add table editor        
@@ -53,7 +53,7 @@ namespace LocalizationUtility
          
          2 - Add a branch right after match
             ldarg.1
-            EmitDelegate for  LocalizationUtility.Instance.TryGetLanguage(lang, out _);
+            EmitDelegate for  !LocalizationUtility.IsVanillaLanguage(lang) && LocalizationUtility.Instance.TryGetLanguage(lang, out var language);
             br.true labelToTableEditing (will skip to the label labelToTableEditing if the result on the delegate is true)
         */
         [HarmonyTranspiler]
@@ -94,9 +94,9 @@ namespace LocalizationUtility
                    new CodeInstruction(OpCodes.Ldarg_1),
                    Transpilers.EmitDelegate<Func<TextTranslation.Language, bool>>((lang) =>
                    {
-                       return LocalizationUtility.Instance.TryGetLanguage(lang, out _);
+                       return !LocalizationUtility.IsVanillaLanguage(lang) && LocalizationUtility.Instance.TryGetLanguage(lang, out var language);
                    }),
-                   new CodeInstruction(OpCodes.Brtrue, labelToTableEditing) //Skips only if LocalizationUtility.Instance.TryGetLanguage(lang, out _) is true
+                   new CodeInstruction(OpCodes.Brtrue, labelToTableEditing) //Skips only if condition is true
                    )//-------------------------------------------------------------------------------
                 .InstructionEnumeration();
             }
