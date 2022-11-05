@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using OWML.Common;
 using OWML.ModHelper;
+using OWML.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,8 +13,6 @@ namespace LocalizationUtility
     {
         public static LocalizationUtility Instance;
 
-        private static readonly HashSet<TextTranslation.Language> vanillaLanguages = new HashSet<TextTranslation.Language>(Enum.GetValues(typeof(TextTranslation.Language)).Cast<TextTranslation.Language>());
-        
         public static TextTranslation.Language languageToReplace => Instance.GetLanguage().LanguageToReplace;
 
         internal Dictionary<string, CustomLanguage> _customLanguages = new();
@@ -27,7 +26,7 @@ namespace LocalizationUtility
 
         internal static bool IsVanillaLanguage() => IsVanillaLanguage(TextTranslation.Get().GetLanguage());
 
-        internal static bool IsVanillaLanguage(TextTranslation.Language language) => vanillaLanguages.Contains(language);
+        internal static bool IsVanillaLanguage(TextTranslation.Language language) => TextTranslation.Language.UNKNOWN <= language && language <= TextTranslation.Language.TOTAL;
 
         public CustomLanguage GetLanguage() => GetLanguage(TextTranslation.Get().GetLanguage());
 
@@ -88,7 +87,7 @@ namespace LocalizationUtility
             {
                 WriteLine($"Registering new language {name}");
 
-                TextTranslation.Language newLanguage = (hasAnyCustomLanguages ? _customLanguages.Values.Max(cl => cl.Language) : vanillaLanguages.Max()) + 1;
+                TextTranslation.Language newLanguage = EnumUtils.Create<TextTranslation.Language>(name);
 
                 CustomLanguage customLanguage = new CustomLanguage(name,true, newLanguage, translationPath, mod, languageToReplace);
                 _customLanguages[name] = customLanguage;
