@@ -1,10 +1,7 @@
 ﻿using HarmonyLib;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Reflection;
-using System.Text;
-using System.Xml;
 
 namespace LocalizationUtility
 {
@@ -12,213 +9,8 @@ namespace LocalizationUtility
     public static class TextTranslationPatches
     {
         //Maybe instead of storing TextTranslation.TranslationTable_XML store, which work more like dictionaries TextTranslation.TranslationTable
-        private static Dictionary<TextTranslation.Language, TextTranslation.TranslationTable_XML> translationTables = new Dictionary<TextTranslation.Language, TextTranslation.TranslationTable_XML>();
+        //private static Dictionary<TextTranslation.Language, TextTranslation.TranslationTable_XML> translationTables = new Dictionary<TextTranslation.Language, TextTranslation.TranslationTable_XML>();
 
-        public static void AddNewTranslation(CustomLanguage language, string translationPath) 
-        {
-            LocalizationUtility.WriteLine($"Storing translation for {language.Language} from {translationPath}");
-            try
-            {
-                var xmlDoc = new XmlDocument();
-                xmlDoc.LoadXml(ReadAndRemoveByteOrderMarkFromPath(translationPath));
-
-                var translationTableNode = xmlDoc.SelectSingleNode("TranslationTable_XML");
-
-                if (translationTableNode == null)
-                {
-                    LocalizationUtility.WriteError($"TranslationTable_XML could not be found in translation file in {translationPath} for language {language.Name}");
-                    return;
-                }
-
-                if(!translationTables.TryGetValue(language.Language, out var translationTable_XML)) 
-                {
-                    translationTable_XML = new TextTranslation.TranslationTable_XML();
-                    translationTables[language.Language] = translationTable_XML;
-                }
-
-                // Add regular text to the table
-                foreach (XmlNode node in translationTableNode.SelectNodes("entry"))
-                {
-                    var key = node.SelectSingleNode("key").InnerText;
-                    var value = node.SelectSingleNode("value").InnerText;
-
-                    if (language.Fixer != null) value = language.Fixer(value);
-
-                    translationTable_XML.table.Add(new TextTranslation.TranslationTableEntry(key, value));
-                }
-
-                // Add ship log entries
-                foreach (XmlNode node in translationTableNode.SelectSingleNode("table_shipLog").SelectNodes("TranslationTableEntry"))
-                {
-                    var key = node.SelectSingleNode("key").InnerText;
-                    var value = node.SelectSingleNode("value").InnerText;
-
-                    if (language.Fixer != null) value = language.Fixer(value);
-
-                    translationTable_XML.table_shipLog.Add(new TextTranslation.TranslationTableEntry(key, value));
-                }
-
-                // Add UI
-                foreach (XmlNode node in translationTableNode.SelectSingleNode("table_ui").SelectNodes("TranslationTableEntryUI"))
-                {
-                    // Keys for UI are all ints
-                    var key = int.Parse(node.SelectSingleNode("key").InnerText);
-                    var value = node.SelectSingleNode("value").InnerText;
-
-                    if (language.Fixer != null) value = language.Fixer(value);
-
-                    translationTable_XML.table_ui.Add(new TextTranslation.TranslationTableEntryUI(key, value));
-                }
-            }
-            catch (Exception e)
-            {
-                LocalizationUtility.WriteError($"Couldn't load translation for language {language.Name} from file in {translationPath}: {e.Message}{e.StackTrace}");
-            }
-        }
-
-        #region NonXMLTranslationAdders
-        public static KeyValuePair<string, string>[] GenerateKeyValuePairsForEntries(string commonKeyPrefix, params string[] entries)
-        {
-            KeyValuePair<string, string>[] pairs = new KeyValuePair<string, string>[entries.Length];
-
-            for (int i = 0; i < entries.Length; i++)
-            {
-                pairs[i] = new KeyValuePair<string, string>(commonKeyPrefix + entries[i], entries[i]);
-            }
-            return pairs;
-        }
-        public static void AddNewTranslation(CustomLanguage language, KeyValuePair<string, string>[] regularEntries, KeyValuePair<string, string>[] shipLogEntries, KeyValuePair<int, string>[] uiEntries)
-        {
-            LocalizationUtility.WriteLine($"Storing translations for {language.Language}");
-            try
-            {
-                if (!translationTables.TryGetValue(language.Language, out var translationTable_XML))
-                {
-                    translationTable_XML = new TextTranslation.TranslationTable_XML();
-                    translationTables[language.Language] = translationTable_XML;
-                }
-
-                // Add regular text to the table
-                foreach (var pair in regularEntries)
-                {
-                    var key = pair.Key;
-                    var value = pair.Value;
-
-                    if (language.Fixer != null) value = language.Fixer(value);
-
-                    translationTable_XML.table.Add(new TextTranslation.TranslationTableEntry(key, value));
-                }
-
-                // Add ship log entries
-                foreach (var pair in shipLogEntries)
-                {
-                    var key = pair.Key;
-                    var value = pair.Value;
-
-                    if (language.Fixer != null) value = language.Fixer(value);
-
-                    translationTable_XML.table_shipLog.Add(new TextTranslation.TranslationTableEntry(key, value));
-                }
-
-                // Add UI
-                foreach (var pair in uiEntries)
-                {
-                    var key = pair.Key;
-                    var value = pair.Value;
-
-                    if (language.Fixer != null) value = language.Fixer(value);
-
-                    translationTable_XML.table_ui.Add(new TextTranslation.TranslationTableEntryUI(key, value));
-                }
-            }
-            catch (Exception e)
-            {
-                LocalizationUtility.WriteError($"Couldn't store translation for language {language.Name}: {e.Message}{e.StackTrace}");
-            }
-        }
-        public static void AddEntriesToRegularTranslationTable(CustomLanguage language, params KeyValuePair<string, string>[] entries)
-        {
-            LocalizationUtility.WriteLine($"Storing translation for {language.Language} for regular translations");
-            try
-            {
-                if (!translationTables.TryGetValue(language.Language, out var translationTable_XML))
-                {
-                    translationTable_XML = new TextTranslation.TranslationTable_XML();
-                    translationTables[language.Language] = translationTable_XML;
-                }
-
-                // Add regular text to the table
-                foreach (var entry in entries)
-                {
-                    var key = entry.Key;
-                    var value = entry.Value;
-
-                    if (language.Fixer != null) value = language.Fixer(value);
-
-                    translationTable_XML.table.Add(new TextTranslation.TranslationTableEntry(key, value));
-                }
-            }
-            catch (Exception e)
-            {
-                LocalizationUtility.WriteError($"Couldn't store translations for language {language.Name}: {e.Message}{e.StackTrace}");
-            }
-        }
-        public static void AddEntriesToShiplogTranslationTable(CustomLanguage language, params KeyValuePair<string, string>[] entries)
-        {
-            LocalizationUtility.WriteLine($"Storing translation for {language.Language} for shiplog translations");
-            try
-            {
-                if (!translationTables.TryGetValue(language.Language, out var translationTable_XML))
-                {
-                    translationTable_XML = new TextTranslation.TranslationTable_XML();
-                    translationTables[language.Language] = translationTable_XML;
-                }
-
-                // Add ship log entries
-                foreach (var entry in entries)
-                {
-                    var key = entry.Key;
-                    var value = entry.Value;
-
-                    if (language.Fixer != null) value = language.Fixer(value);
-
-                    translationTable_XML.table_shipLog.Add(new TextTranslation.TranslationTableEntry(key, value));
-                }
-            }
-            catch (Exception e)
-            {
-                LocalizationUtility.WriteError($"Couldn't add translation for language {language.Name}: {e.Message}{e.StackTrace}");
-            }
-        }
-
-        public static void AddEntriesToUITranslationTable(CustomLanguage language, params KeyValuePair<int, string>[] entries)
-        {
-            LocalizationUtility.WriteLine($"Storing translation for {language.Language} for UI translations");
-            try
-            {
-                if (!translationTables.TryGetValue(language.Language, out var translationTable_XML))
-                {
-                    translationTable_XML = new TextTranslation.TranslationTable_XML();
-                    translationTables[language.Language] = translationTable_XML;
-                }
-
-                // Add UI
-                foreach (var entry in entries)
-                {
-                    var key = entry.Key;
-                    var value = entry.Value;
-
-                    if (language.Fixer != null) value = language.Fixer(value);
-
-                    translationTable_XML.table_ui.Add(new TextTranslation.TranslationTableEntryUI(key, value));
-                }
-            }
-            catch (Exception e)
-            {
-                LocalizationUtility.WriteError($"Couldn't add translation for language {language.Name}: {e.Message}{e.StackTrace}");
-            }
-        }
-        #endregion
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(TextTranslation), nameof(TextTranslation.SetLanguage))]
@@ -243,17 +35,15 @@ namespace LocalizationUtility
             }
 
             //Now not only we can edit vanila translation tables, but multiple mods can edit the same language table, as long as the keys are unique
-            if (translationTables.TryGetValue(lang, out var table)) 
-            {
-                foreach (var pair in table.table)
-                    __instance.m_table.theTable[pair.key] = pair.value;
 
-                foreach (var pair in table.table_shipLog)
-                    __instance.m_table.theShipLogTable[pair.key] = pair.value;
+            foreach (var pair in language.TranslationTable.table)
+                __instance.m_table.theTable[pair.key] = pair.value;
 
-                foreach (var pair in table.table_ui)
-                    __instance.m_table.theUITable[pair.key] = pair.value;
-            }
+            foreach (var pair in language.TranslationTable.table_shipLog)
+                __instance.m_table.theShipLogTable[pair.key] = pair.value;
+
+            foreach (var pair in language.TranslationTable.table_ui)
+                __instance.m_table.theUITable[pair.key] = pair.value;
 
             var onLanguageChanged = (MulticastDelegate)__instance.GetType().GetField("OnLanguageChanged", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(__instance);
             if (onLanguageChanged != null)
@@ -275,20 +65,18 @@ namespace LocalizationUtility
             {
                 return;
             }
-            
-            if (translationTables.TryGetValue(lang, out var table))
-            {
-                LocalizationUtility.WriteLine($"Loading aditional translations for {language.Name}");
 
-                foreach (var pair in table.table)
-                    __instance.m_table.theTable[pair.key] = pair.value;
+            LocalizationUtility.WriteLine($"Loading aditional translations for {language.Name}");
 
-                foreach (var pair in table.table_shipLog)
-                    __instance.m_table.theShipLogTable[pair.key] = pair.value;
+            foreach (var pair in language.TranslationTable.table)
+                __instance.m_table.theTable[pair.key] = pair.value;
 
-                foreach (var pair in table.table_ui)
-                    __instance.m_table.theUITable[pair.key] = pair.value;
-            }
+            foreach (var pair in language.TranslationTable.table_shipLog)
+                __instance.m_table.theShipLogTable[pair.key] = pair.value;
+
+            foreach (var pair in language.TranslationTable.table_ui)
+                __instance.m_table.theUITable[pair.key] = pair.value;
+
         }
 
 
@@ -384,19 +172,6 @@ namespace LocalizationUtility
             __result = text;
 
             return false;
-        }
-
-        public static string ReadAndRemoveByteOrderMarkFromPath(string path)
-        {
-            byte[] bytes = File.ReadAllBytes(path);
-            byte[] preamble1 = Encoding.UTF8.GetPreamble();
-            byte[] preamble2 = Encoding.Unicode.GetPreamble();
-            byte[] preamble3 = Encoding.BigEndianUnicode.GetPreamble();
-            if (bytes.StartsWith(preamble1))
-                return Encoding.UTF8.GetString(bytes, preamble1.Length, bytes.Length - preamble1.Length);
-            if (bytes.StartsWith(preamble2))
-                return Encoding.Unicode.GetString(bytes, preamble2.Length, bytes.Length - preamble2.Length);
-            return bytes.StartsWith(preamble3) ? Encoding.BigEndianUnicode.GetString(bytes, preamble3.Length, bytes.Length - preamble3.Length) : Encoding.UTF8.GetString(bytes);
         }
     }
 }

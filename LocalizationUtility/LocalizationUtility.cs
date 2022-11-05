@@ -13,12 +13,12 @@ namespace LocalizationUtility
     {
         public static LocalizationUtility Instance;
 
-        private static readonly HashSet<TextTranslation.Language> vanillaLanguages = new HashSet<TextTranslation.Language>(Enum.GetValues(typeof(TextTranslation.Language)).Cast<TextTranslation.Language>());
-        public static TextTranslation.Language languageToReplace => Instance.GetLanguage().LanguageToReplace;
+        private static readonly HashSet<TextTranslation.Language> vanillaLanguages = new(Enum.GetValues(typeof(TextTranslation.Language)).Cast<TextTranslation.Language>());
+        public static TextTranslation.Language LanguageToReplace => Instance.GetLanguage().LanguageToReplace;
 
         internal Dictionary<string, CustomLanguage> _customLanguages = new();
 
-        internal bool hasAnyCustomLanguages => _customLanguages.Count((pair) => pair.Value.IsCustom) > 0;
+        internal bool HasAnyCustomLanguages => _customLanguages.Count((pair) => pair.Value.IsCustom) > 0;
 
         public override object GetApi()
         {
@@ -90,10 +90,10 @@ namespace LocalizationUtility
 
                 TextTranslation.Language newLanguage = EnumUtils.Create<TextTranslation.Language>(languageName);
 
-                CustomLanguage customLanguage = new CustomLanguage(languageName,true, newLanguage, translationPath, mod, languageToReplace);
+                CustomLanguage customLanguage = new(languageName,true, newLanguage, languageToReplace);
                 _customLanguages[languageName] = customLanguage;
 
-                TextTranslationPatches.AddNewTranslation(customLanguage, customLanguage.TranslationPath);
+                customLanguage.AddTranslation(mod.ModHelper.Manifest.ModFolderPath  + translationPath);
             }
             catch(Exception ex)
             {
@@ -109,7 +109,7 @@ namespace LocalizationUtility
 
                 if (TryGetLanguage(languageName, out var customLanguage))
                 {
-                    TextTranslationPatches.AddNewTranslation(customLanguage, mod.ModHelper.Manifest.ModFolderPath + translationPath);
+                    customLanguage.AddTranslation(mod.ModHelper.Manifest.ModFolderPath + translationPath);
                     return;
                 }
                 WriteError($"The custom language {languageName} isn't registered yet");
@@ -129,7 +129,7 @@ namespace LocalizationUtility
 
                 if (TryGetLanguage(languageName, out var customLanguage))
                 {
-                    TextTranslationPatches.AddNewTranslation(customLanguage, regularEntries, shipLogEntries, uiEntries);
+                    customLanguage.AddTranslation(regularEntries, shipLogEntries, uiEntries);
                     return;
                 }
                 WriteError($"The custom language {languageName} isn't registered yet");
@@ -142,7 +142,7 @@ namespace LocalizationUtility
         }
         public void AddRegularTranslation(string languageName, string commonKeyPrefix, params string[] entries)
         {
-            AddRegularTranslation(languageName, TextTranslationPatches.GenerateKeyValuePairsForEntries(commonKeyPrefix, entries));
+            AddRegularTranslation(languageName, CustomLanguage.GenerateKeyValuePairsForEntries(commonKeyPrefix, entries));
         }
         public void AddRegularTranslation(string languageName, params KeyValuePair<string, string>[] entries)
         {
@@ -152,7 +152,7 @@ namespace LocalizationUtility
 
                 if (TryGetLanguage(languageName, out var customLanguage))
                 {
-                    TextTranslationPatches.AddEntriesToRegularTranslationTable(customLanguage, entries);
+                    customLanguage.AddEntriesToRegularTranslationTable(entries);
                     return;
                 }
                 WriteError($"The custom language {languageName} isn't registered yet");
@@ -165,7 +165,7 @@ namespace LocalizationUtility
         }
         public void AddShiplogTranslation(string languageName, string commonKeyPrefix, params string[] entries)
         {
-            AddShiplogTranslation(languageName, TextTranslationPatches.GenerateKeyValuePairsForEntries(commonKeyPrefix, entries));
+            AddShiplogTranslation(languageName, CustomLanguage.GenerateKeyValuePairsForEntries(commonKeyPrefix, entries));
         }
         public void AddShiplogTranslation(string languageName, params KeyValuePair<string, string>[] entries)
         {
@@ -175,7 +175,7 @@ namespace LocalizationUtility
 
                 if (TryGetLanguage(languageName, out var customLanguage))
                 {
-                    TextTranslationPatches.AddEntriesToShiplogTranslationTable(customLanguage, entries);
+                    customLanguage.AddEntriesToShiplogTranslationTable(entries);
                     return;
                 }
                 WriteError($"The custom language {languageName} isn't registered yet");
@@ -194,7 +194,7 @@ namespace LocalizationUtility
 
                 if (TryGetLanguage(languageName, out var customLanguage))
                 {
-                    TextTranslationPatches.AddEntriesToUITranslationTable(customLanguage, entries);
+                    customLanguage.AddEntriesToUITranslationTable(entries);
                     return;
                 }
                 WriteError($"The custom language {languageName} isn't registered yet");
@@ -261,7 +261,7 @@ namespace LocalizationUtility
             foreach(var lang in vanillaLanguages) //Adds the vanilla languages so we can add translations to it with AddTranslation
             {
                 string languageName = lang.ToString();
-                _customLanguages[languageName] = new CustomLanguage(languageName,false, lang, "", null, lang);
+                _customLanguages[languageName] = new CustomLanguage(languageName,false, lang, lang);
             }
         }
 
