@@ -4,6 +4,6 @@
   "author": "xen",
   "name": "Interplanetary Polyglot",
   "uniqueName": "xen.LocalizationUtility",
-  "version": "0.2.0",
-  "owmlVersion": "2.5.2"
+  "version": "0.2.1",
+  "owmlVersion": "2.7.3"
 }
