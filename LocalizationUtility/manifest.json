@@ -4,6 +4,7 @@
   "author": "xen",
   "name": "Interplanetary Polyglot",
   "uniqueName": "xen.LocalizationUtility",
-  "version": "0.2.1",
-  "owmlVersion": "2.7.3"
+  "version": "0.2.2",
+  "owmlVersion": "2.7.3",
+  "donateLink": "https://www.patreon.com/xen42"
 }
