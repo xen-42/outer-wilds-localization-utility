@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using UnityEngine;
 
 namespace LocalizationUtility
 {
@@ -206,16 +207,19 @@ namespace LocalizationUtility
             }
         }
         #endregion
-        public void AddLanguageFont(ModBehaviour mod, string languageName, string assetBundlePath, string fontPath)
+        
+		public Font AddLanguageFont(ModBehaviour mod, string languageName, string assetBundlePath, string fontPath)
         {
             try
             {
-                _customLanguages[languageName].AddFont(assetBundlePath, fontPath, mod);
+                return _customLanguages[languageName].AddFont(assetBundlePath, fontPath, mod);
             }
             catch (Exception ex)
             {
                 WriteError($"Failed to add font to language. {ex}");
             }
+
+			return null;
         }
 
         public void AddLanguageFixer(string languageName, Func<string, string> fixer)
