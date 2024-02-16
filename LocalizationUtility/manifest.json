@@ -5,5 +5,6 @@
   "name": "Interplanetary Polyglot",
   "uniqueName": "xen.LocalizationUtility",
   "version": "0.3.0",
-	"owmlVersion": "2.9.8"
+	"owmlVersion": "2.9.8",
+  "donateLink": "https://www.patreon.com/xen42"
 }
