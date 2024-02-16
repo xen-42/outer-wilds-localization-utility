@@ -36,7 +36,7 @@ namespace LocalizationUtility
             //AddTranslation(TranslationPath);
         }
 
-        public void AddFont(string assetBundlePath, string fontPath, ModBehaviour mod)
+        public Font AddFont(string assetBundlePath, string fontPath, ModBehaviour mod)
         {
             try
             {
@@ -45,6 +45,8 @@ namespace LocalizationUtility
             catch (Exception) { };
 
             if (Font == null) LocalizationUtility.WriteError($"Couldn't load font at {assetBundlePath} in bundle {fontPath}");
+
+			return Font;
         }
 
         public void AddFixer(Func<string, string> fixer)

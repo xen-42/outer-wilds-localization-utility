@@ -1,6 +1,7 @@
 ﻿using OWML.ModHelper;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace LocalizationUtility
 {
@@ -14,6 +15,7 @@ namespace LocalizationUtility
             => LocalizationUtility.Instance.AddTranslation(languageName, regularEntries, shipLogEntries, uiEntries);
         public void AddTranslation(ModBehaviour mod, string languageName, string translationPath)
             => LocalizationUtility.Instance.AddTranslation(mod, languageName, translationPath);
+
         #region AddRegularTranslation
         public void AddRegularTranslation(string languageName, string key, string value)
             => LocalizationUtility.Instance.AddRegularTranslation(languageName, new KeyValuePair<string, string>(key, value));
@@ -36,9 +38,13 @@ namespace LocalizationUtility
         public void AddUITranslation(string languageName, params KeyValuePair<int, string>[] entries)
             => LocalizationUtility.Instance.AddUITranslation(languageName, entries);
         #endregion
-        public void AddLanguageFont(ModBehaviour mod, string languageName, string assetBundlePath, string fontPath)
+        
+		public void AddLanguageFont(ModBehaviour mod, string languageName, string assetBundlePath, string fontPath)
             => LocalizationUtility.Instance.AddLanguageFont(mod, languageName, assetBundlePath, fontPath);
-        public void AddLanguageFixer(string languageName, Func<string, string> fixer)
+		public void AddLanguageFont(ModBehaviour mod, string languageName, string assetBundlePath, string fontPath, out Font font)
+			=> font = LocalizationUtility.Instance.AddLanguageFont(mod, languageName, assetBundlePath, fontPath);
+
+		public void AddLanguageFixer(string languageName, Func<string, string> fixer)
             => LocalizationUtility.Instance.AddLanguageFixer(languageName, fixer);
         public void SetLanguageDefaultFontSpacing(string languageName, float defaultFontSpacing)
             => LocalizationUtility.Instance.SetLanguageDefaultFontSpacing(languageName, defaultFontSpacing);
