@@ -1,10 +1,10 @@
 {
-  "$schema": "https://raw.githubusercontent.com/amazingalek/owml/master/schemas/manifest_schema.json",
-  "filename": "LocalizationUtility.dll",
-  "author": "xen",
-  "name": "Interplanetary Polyglot",
-  "uniqueName": "xen.LocalizationUtility",
-  "version": "0.3.0",
+	"$schema": "https://raw.githubusercontent.com/amazingalek/owml/master/schemas/manifest_schema.json",
+	"filename": "LocalizationUtility.dll",
+	"author": "xen",
+	"name": "Interplanetary Polyglot",
+	"uniqueName": "xen.LocalizationUtility",
+	"version": "0.3.1",
 	"owmlVersion": "2.9.8",
-  "donateLink": "https://www.patreon.com/xen42"
+	"donateLink": "https://www.patreon.com/xen42"
 }
