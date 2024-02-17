@@ -51,7 +51,7 @@ Based on [Outer Wilds Korean Translation](https://outerwildsmods.com/mods/outerw
     }
     ```
     This assumes that the XML file with original text and your translations is in the `assets/Translation.xml` file.
-6. Optionally, add a font or a fixer function with `api.AddLanguageFont` or `api.AddLanguageFixer` underneath the `api.RegisterLanguage` line. Adding a font is optional. A "fixer" function will take in a string and output a string where the characters have been correctly reformatted. This is necessary for certain languages, e.g. right-to-left languages like Arabic or Farsi.
+6. Optionally, add a font or a fixer function with `api.AddLanguageFont` or `api.AddLanguageFixer` underneath the `api.RegisterLanguage` line. Adding a font is optional. A "fixer" function will take in a string and output a string where the characters have been correctly reformatted. This is necessary for certain languages, e.g. right-to-left languages like Arabic or Farsi. Make sure to call all these methods at the same time, starting with `RegisterLanguage`, else they may not work as intended.
 
 ## Other info
 
