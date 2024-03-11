@@ -81,8 +81,8 @@ namespace LocalizationUtility
 				// Add regular text to the table
 				foreach (XmlNode node in translationTableNode.SelectNodes("entry"))
 				{
-					var key = node.SelectSingleNode("key").InnerText;
-					var value = node.SelectSingleNode("value").InnerText;
+					var key = node.SelectSingleNode("key").InnerText.Trim();
+					var value = node.SelectSingleNode("value").InnerText.Trim();
 
 					if (Fixer != null) value = Fixer(value);
 

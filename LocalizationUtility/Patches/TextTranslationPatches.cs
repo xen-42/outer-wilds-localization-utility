@@ -145,7 +145,8 @@ namespace LocalizationUtility
                 return false;
             }
 
-            string text = __instance.m_table.Get(key);
+			// Whitespace issues are really annoying so we try to be more forgiving
+            string text = __instance.m_table.Get(key) ?? __instance.m_table.Get(key.Trim());
             if (text == null)
             {
                 LocalizationUtility.WriteError($"String \"{key}\" not found in table for language {LocalizationUtility.Instance.GetLanguage(__instance.m_language).Name}");
