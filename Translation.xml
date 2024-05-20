@@ -161,7 +161,7 @@
 			SOLANUM: No one knows how this universe was made, but one thing we do know is everything used to be very hot and very dense (tightly packed together).
 		</key>
 		<value>
-			SOLANUM: No one knows how this universe was made, but one thing we do know is everything used to be very hot and very dense (tightly packed togehter).
+			SOLANUM: No one knows how this universe was made, but one thing we do know is everything used to be very hot and very dense (tightly packed together).
 		</value>
 	</entry>
 	<entry>
@@ -2656,11 +2656,11 @@
 	</entry>
 	<entry>
 		<key>Slate</key>
-		<value>استئناف الرحلة</value>
+		<value>Slate</value>
 	</entry>
 	<entry>
 		<key>Scientist1AThere’s our pilot! Back from your pre-launch campout under the stars, I see.</key>
-		<value>استئناف الرحلة</value>
+		<value>There’s our pilot! Back from your pre-launch campout under the stars, I see.</value>
 	</entry>
 	<entry>
 		<key>Scientist1ASo it’s Launch Day, eh? Seems like only yesterday you joined the space program, and suddenly here you are, leaving on your first solo voyage.</key>
@@ -4000,26 +4000,26 @@
 	</entry>
 	<entry>
 		<key>
-			Melorae: If you’ve come here to look for Coleus, this is where we were when he vanished. He’s been missing for two days now!
+			MELORAE: If you’ve come here to look for Coleus, this is where we were when he vanished. He’s been missing for two days now!
 		</key>
 		<value>
-			Melorae: If you’ve come here to look for Coleus, this is where we were when he vanished. He’s been missing for two days now!
+			MELORAE: If you’ve come here to look for Coleus, this is where we were when he vanished. He’s been missing for two days now!
 		</value>
 	</entry>
 	<entry>
 		<key>
-			Annona: Your strange, wandering rock friend is here, though Coleus isn’t.
+			ANNONA: Your strange, wandering rock friend is here, though Coleus isn’t.
 		</key>
 		<value>
-			Annona: Your strange, wandering rock friend is here, though Coleus isn’t.
+			ANNONA: Your strange, wandering rock friend is here, though Coleus isn’t.
 		</value>
 	</entry>
 	<entry>
 		<key>
-			Melorae: Coleus and I observed this unusual-looking rock shard (and several smaller rocks) in at least two other caverns. I’m unsure if this is relevant.
+			MELORAE: Coleus and I observed this unusual-looking rock shard (and several smaller rocks) in at least two other caverns. I’m unsure if this is relevant.
 		</key>
 		<value>
-			Melorae: Coleus and I observed this unusual-looking rock shard (and several smaller rocks) in at least two other caverns. I’m unsure if this is relevant.
+			MELORAE: Coleus and I observed this unusual-looking rock shard (and several smaller rocks) in at least two other caverns. I’m unsure if this is relevant.
 		</value>
 	</entry>
 	<entry>
@@ -4032,18 +4032,18 @@
 	</entry>
 	<entry>
 		<key>
-			Melorae: We were examining the different rocks. I recall Coleus standing on the largest one (the wandering rock). I was taking notes, and then my lantern died.
+			MELORAE: We were examining the different rocks. I recall Coleus standing on the largest one (the wandering rock). I was taking notes, and then my lantern died.
 		</key>
 		<value>
-			Melorae: We were examining the different rocks. I recall Coleus standing on the largest one (the wandering rock). I was taking notes, and then my lantern died.
+			MELORAE: We were examining the different rocks. I recall Coleus standing on the largest one (the wandering rock). I was taking notes, and then my lantern died.
 		</value>
 	</entry>
 	<entry>
 		<key>
-			Melorae: When I lit it again, Coleus and the rock were both gone.
+			MELORAE: When I lit it again, Coleus and the rock were both gone.
 		</key>
 		<value>
-			Melorae: When I lit it again, Coleus and the rock were both gone.
+			MELORAE: When I lit it again, Coleus and the rock were both gone.
 		</value>
 	</entry>
 	<entry>
@@ -5578,10 +5578,9 @@
 	</entry>
 	<entry>
 		<key>
-			Melorae: Coleus is missing! He vanished from the &lt;color=orange&gt;Lakebed Cave&lt;/color&gt; (the one at the bottom of the dry lakebed at the north pole) several days ago, and we’re unable to find any trace of him. I don’t know how much air he had when he disappeared. I beg any friend reading this, help us recover Coleus!
-		</key>
+			MELORAE: Coleus is missing! He vanished from the &lt;color=orange&gt;Lakebed Cave&lt;/color&gt; (the one at the bottom of the dry lakebed at the north pole) several days ago, and we’re unable to find any trace of him. I don’t know how much air he had when he disappeared. I beg any friend reading this, help us recover Coleus!</key>
 		<value>
-			Melorae: Coleus is missing! He vanished from the &lt;color=orange&gt;Lakebed Cave&lt;/color&gt; (the one at the bottom of the dry lakebed at the north pole) several days ago, and we’re unable to find any trace of him. I don’t know how much air he had when he disappeared. I beg any friend reading this, help us recover Coleus!
+			MELORAE: Coleus is missing! He vanished from the &lt;color=orange&gt;Lakebed Cave&lt;/color&gt; (the one at the bottom of the dry lakebed at the north pole) several days ago, and we’re unable to find any trace of him. I don’t know how much air he had when he disappeared. I beg any friend reading this, help us recover Coleus!
 		</value>
 	</entry>
 	<entry>
@@ -6089,7 +6088,7 @@
 			RAMIE: The interval is incredibly miniscule (roughly one hundred-thousandth of a second). Do you suppose our instruments can’t accurately measure time to such a small degree?
 		</key>
 		<value>
-			RAMIE: The interval is incredibly miniscule (roughly one hundred-thousandth of a second). Do you suppose our instruments can’t accurately measure time to such a small degree?
+			RAMIE: The interval is incredibly minuscule (roughly one hundred-thousandth of a second). Do you suppose our instruments can’t accurately measure time to such a small degree?
 		</value>
 	</entry>
 	<entry>
@@ -8038,7 +8037,7 @@
 	</entry>
 	<entry>
 		<key>RiebeckLearned_5How did they keep the sand out? If it were me, I’d be nervous about getting buried in the caves by that awful river of sand. Gosh, the Nomai sure were ingenius, building an entire settlement underground. The Sunless City! ...Wow!</key>
-		<value>How did they keep the sand out? If it were me, I’d be nervous about getting buried in the caves by that awful river of sand. Gosh, the Nomai sure were ingenius, building an entire settlement underground. The Sunless City! ...Wow!</value>
+		<value>How did they keep the sand out? If it were me, I’d be nervous about getting buried in the caves by that awful river of sand. Gosh, the Nomai sure were ingenious, building an entire settlement underground. The Sunless City! ...Wow!</value>
 	</entry>
 	<entry>
 		<key>RiebeckLearned_5That means there were two groups of Nomai — one that lived on Ember Twin, and one that lived here on Brittle Hollow. But they must have traveled around the solar system, since Nomai writing can be found on other planets, too.</key>
@@ -11627,12 +11626,20 @@
 			<value>Symbol Room</value>
 		</TranslationTableEntry>
 		<TranslationTableEntry>
+			<key>Hidden Vault Seals</key>
+			<value>Hidden Vault Seals</value>
+		</TranslationTableEntry>
+		<TranslationTableEntry>
 			<key>Secret Passage</key>
 			<value>Secret Passage</value>
 		</TranslationTableEntry>
 		<TranslationTableEntry>
-			<key>Symbol RoomThe light coming out of the vault gave me a vision of climbing a spiral staircase to a room near the top of a tower. One of the Stranger's inhabitants pointed at a mural of an identical tower beneath a ringed planet, then picked up an artifact and carried it downstairs to a room with a green fire. Some time later, several lamps in the mural room turned on while others turned off, plunging the mural into darkness and revealing a secret passage.</key>
-			<value>The light coming out of the vault gave me a vision of climbing a spiral staircase to a room near the top of a tower. One of the Stranger's inhabitants pointed at a mural of an identical tower beneath a ringed planet, then picked up an artifact and carried it downstairs to a room with a green fire. Some time later, several lamps in the mural room turned on while others turned off, plunging the mural into darkness and revealing a secret passage.</value>
+			<key>Symbol RoomThe light coming out of the vault gave me a vision of climbing a spiral staircase to a room near the top of a tower. One of the Stranger's inhabitants pointed at a mural of an identical tower beneath a ringed planet, then picked up an artifact and carried it downstairs to a room with a green fire. Some time later, two of the lamps in the mural room turned off, plunging the mural into darkness and revealing a secret passage.</key>
+			<value>The light coming out of the vault gave me a vision of climbing a spiral staircase to a room near the top of a tower. One of the Stranger's inhabitants pointed at a mural of an identical tower beneath a ringed planet, then picked up an artifact and carried it downstairs to a room with a green fire. Some time later, two of the lamps in the mural room turned off, plunging the mural into darkness and revealing a secret passage.</value>
+		</TranslationTableEntry>
+		<TranslationTableEntry>
+			<key>Symbol RoomThe passage lead to three wooden containers, each marked with a glowing vault seal.</key>
+			<value>The passage led to three wooden containers, each marked with a glowing vault seal.</value>
 		</TranslationTableEntry>
 		<TranslationTableEntry>
 			<key>Symbol RoomA secret room filled with wooden containers marked with different symbols.</key>
@@ -11791,20 +11798,36 @@
 			<value>Subterranean Lake</value>
 		</TranslationTableEntry>
 		<TranslationTableEntry>
+			<key>Enclosed Fire</key>
+			<value>Enclosed Fire</value>
+		</TranslationTableEntry>
+		<TranslationTableEntry>
 			<key>Fire Chamber</key>
 			<value>Fire Chamber</value>
 		</TranslationTableEntry>
 		<TranslationTableEntry>
-			<key>Subterranean LakeI looked through a peephole in the side of a large metal structure suspended by chains and saw a green fire burning inside.</key>
-			<value>I looked through a peephole in the side of a large metal structure suspended by chains and saw a green fire burning inside.</value>
+			<key>Subterranean LakeI looked through a peephole in the side of a large metal structure suspended by chains. Inside is another green fire and a staircase leading farther below.</key>
+			<value>I looked through a peephole in the side of a large metal structure suspended by chains. Inside is another green fire and a staircase leading farther below.</value>
+		</TranslationTableEntry>
+		<TranslationTableEntry>
+			<key>Subterranean LakeI looked through a peephole in the side of a large metal structure suspended by chains like the one in the Reservoir. Inside is another green fire and a staircase leading farther below.</key>
+			<value>I looked through a peephole in the side of a large metal structure suspended by chains like the one in the Reservoir. Inside is another green fire and a staircase leading farther below.</value>
+		</TranslationTableEntry>
+		<TranslationTableEntry>
+			<key>Vault Room Fire</key>
+			<value>Vault Room Fire</value>
 		</TranslationTableEntry>
 		<TranslationTableEntry>
 			<key>Missing Vault</key>
 			<value>Missing Vault</value>
 		</TranslationTableEntry>
 		<TranslationTableEntry>
-			<key>Subterranean LakeI saw a vision-like recording of two figures taking artifacts into a large metal structure suspended by chains and going to sleep at the green fire in front of the sealed vault. Upon waking up with lit artifacts, the two figures picked up the vault and carried it down a staircase and out of sight.</key>
-			<value>I saw a vision-like recording of two figures taking artifacts into a large metal structure suspended by chains and going to sleep at the green fire in front of the sealed vault. Upon waking up with lit artifacts, the two figures picked up the vault and carried it down a staircase and out of sight.</value>
+			<key>Subterranean LakeI saw a vision-like recording of two figures taking artifacts into a large metal structure suspended by chains and going to sleep at the green fire in front of the sealed vault. Upon waking up with lit artifacts, the two figures picked up the vault and carried it down a staircase to somewhere farther below.</key>
+			<value>I saw a vision-like recording of two figures taking artifacts into a large metal structure suspended by chains and going to sleep at the green fire in front of the sealed vault. Upon waking up with lit artifacts, the two figures picked up the vault and carried it down a staircase to somewhere farther below.</value>
+		</TranslationTableEntry>
+		<TranslationTableEntry>
+			<key>Subterranean LakeI saw a vision-like recording of two figures taking artifacts into the Reservoir's submerged structure and going to sleep at the green fire in front of the sealed vault. Upon waking up with lit artifacts, the two figures picked up the vault and carried it down a staircase to somewhere farther below.</key>
+			<value>I saw a vision-like recording of two figures taking artifacts into the Reservoir's submerged structure and going to sleep at the green fire in front of the sealed vault. Upon waking up with lit artifacts, the two figures picked up the vault and carried it down a staircase to somewhere farther below.</value>
 		</TranslationTableEntry>
 		<TranslationTableEntry>
 			<key>Subterranean LakeI discovered a vast subterranean lake beneath the submerged structure. The sealed vault is resting on the shore of the lake. There are three interfaces, each marked with one of the three symbols from the vault.</key>
@@ -11845,6 +11868,10 @@
 		<TranslationTableEntry>
 			<key>Sealed VaultI used the vision torch to share my knowledge of the solar system's history with the Prisoner.</key>
 			<value>I used the vision torch to share my knowledge of the solar system's history with the Prisoner.</value>
+		</TranslationTableEntry>
+		<TranslationTableEntry>
+			<key>Sealed VaultThe Prisoner left one final vision for me by the water's edge as a farewell.</key>
+			<value>The Prisoner left one final vision for me by the water's edge as a farewell.</value>
 		</TranslationTableEntry>
 		<TranslationTableEntry>
 			<key>Shrouded Woodlands</key>
@@ -12925,6 +12952,10 @@
 			<value>DO YOU WISH TO APPLY YOUR CHANGES?</value>
 		</TranslationTableEntryUI>
 		<TranslationTableEntryUI>
+			<key>148</key>
+			<value>Render Mode</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
 			<key>150</key>
 			<value>Use Auto Boost</value>
 		</TranslationTableEntryUI>
@@ -13938,7 +13969,11 @@
 		</TranslationTableEntryUI>
 		<TranslationTableEntryUI>
 			<key>525</key>
-			<value />
+			<value>Controller disconnected.\\nPlease reconnect your controller.</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>526</key>
+			<value>Wireless controller disconnected.\\nPlease reconnect your wireless controller.</value>
 		</TranslationTableEntryUI>
 		<TranslationTableEntryUI>
 			<key>550</key>
@@ -14801,6 +14836,26 @@
 			<value>Instant</value>
 		</TranslationTableEntryUI>
 		<TranslationTableEntryUI>
+			<key>995</key>
+			<value>1440p/60fps</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>996</key>
+			<value>2160p/30fps</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>997</key>
+			<value>Dynamic/60fps</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>998</key>
+			<value>1080p/60fps</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>999</key>
+			<value>1440p/30fps</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
 			<key>1000</key>
 			<value>Create Profile</value>
 		</TranslationTableEntryUI>
@@ -15353,6 +15408,26 @@
 			<value>In the ship log, scrolls through long log entries</value>
 		</TranslationTableEntryUI>
 		<TranslationTableEntryUI>
+			<key>1189</key>
+			<value>Enables wireless controller vibration function (wireless controller only).</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>1190</key>
+			<value>Enables controller vibration (controller only).</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>1191</key>
+			<value>Determines how far (from center) the left/right stick must be tilted before any input is detected. Consider increasing this dead zone if your character moves or looks around when you're not touching the left/right stick.</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>1192</key>
+			<value>Determines how far (from full tilt) the left/right stick must be released before maximum input is no longer detected. Consider increasing this dead zone if you are unable to move or look at maximum speed.</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>1193</key>
+			<value>Selects the resolution and framerate to render at.\\nDynamic resolution is ideal for displays with Variable Refresh Rate (VRR) support.</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
 			<key>1200</key>
 			<value>The Stranger</value>
 		</TranslationTableEntryUI>
@@ -15633,6 +15708,10 @@
 			<value>Preflight Checklist</value>
 		</TranslationTableEntryUI>
 		<TranslationTableEntryUI>
+			<key>1409</key>
+			<value>(unsupported)</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
 			<key>1410</key>
 			<value>Reduced Frights</value>
 		</TranslationTableEntryUI>
@@ -15843,6 +15922,98 @@
 		<TranslationTableEntryUI>
 			<key>1545</key>
 			<value>Change volume for sound effects.</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>1550</key>
+			<value>Would you like to reset your input settings?</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>1551</key>
+			<value>Yes</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>1552</key>
+			<value>No</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>1553</key>
+			<value>Fullscreen</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>1554</key>
+			<value>Windowed</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>1555</key>
+			<value>Borderless Window</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>1556</key>
+			<value>Keyboard Layout</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>1557</key>
+			<value>Sets key bindings according to the selected keyboard layout. (Changing this setting resets Keyboard &amp; Mouse bindings to defaults)</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>1558</key>
+			<value>Switch Pro Controller (unsupported)</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>1559</key>
+			<value>Switch Slideshow</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>1560</key>
+			<value>Resume Expedition</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>1561</key>
+			<value>Adjust the slider until the image is barely visable.</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>1562</key>
+			<value>Apply</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>1563</key>
+			<value>Cancel</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>1564</key>
+			<value>Gamma</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>1565</key>
+			<value>Next</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>1566</key>
+			<value>Previous</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>1570</key>
+			<value>Vibration Function</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>177</key>
+			<value>UI Size</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>1053</key>
+			<value>Auto</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>1054</key>
+			<value>Regular</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>1055</key>
+			<value>Large</value>
+		</TranslationTableEntryUI>
+		<TranslationTableEntryUI>
+			<key>1194</key>
+			<value>Auto: Size is automatically determined by Language and Platform.\\nRegular/Large: Size is manually locked to the selected option.</value>
 		</TranslationTableEntryUI>
 	</table_ui>
 </TranslationTable_XML>
