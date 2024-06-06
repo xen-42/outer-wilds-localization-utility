@@ -6,12 +6,8 @@ Based on [Outer Wilds Korean Translation](https://outerwildsmods.com/mods/outerw
 
 ## Getting started
 
-1. Create a base mod using [the regular mod template.](https://github.com/Raicuparta/ow-mod-template). 
-2. Rename all files to match the mod name (for example let's say we are making the DothrakiTranslation mod):
-   1. Instead of `ModTemplate/ModTemplate.cs`, rename files to `DothrakiTranslation/DothrakiTranslation.cs`. (This also applies to `ModTemplate.csproj.user`.)
-   2. Replace every instance of `ModTemplate` with `DothrakiTranslation` in the script texts (should be just the `ModTemplate.cs`).
-   3. Fix up `filename` in `manifest.json` accordingly.
-3. Add a dictionary entry to the end of the `manifest.json` dict that specifies the dependency for Outer Wilds Mod Manager:
+1. Create a base OWML mod following the [getting started guide.](https://owml.outerwildsmods.com/guides/getting_started.html). 
+2. Add a dictionary entry to the end of the `manifest.json` dict that specifies the dependency for Outer Wilds Mod Manager:
     ```json
     "dependencies": [
         "xen.LocalizationUtility"
@@ -19,7 +15,7 @@ Based on [Outer Wilds Korean Translation](https://outerwildsmods.com/mods/outerw
     ```
 
     Note that this will not automatically install the dependency, however the Outer Wilds Mod Manager will prompt users to install and enable the dependency when they enable your translation mod.
-4. Add a file called `ILocalizationAPI.cs` (a C# interface) into your mod directory, with the following content - replace `DothrakiTranslation` with the name of your translation, of course:
+3. Add a file called `ILocalizationAPI.cs` (a C# interface) into your mod directory, with the following content - replace `DothrakiTranslation` with the name of your translation, of course:
     ```cs
     using OWML.ModHelper;
     using System;
@@ -34,7 +30,7 @@ Based on [Outer Wilds Korean Translation](https://outerwildsmods.com/mods/outerw
         }
     }
     ```
-5. In your mod code (`DothrakiTranslation.cs`), access the utility mod like so:
+4. In your mod code (`DothrakiTranslation.cs`), access the utility mod like so:
     ```cs
     namespace DothrakiTranslation
     {
@@ -51,7 +47,7 @@ Based on [Outer Wilds Korean Translation](https://outerwildsmods.com/mods/outerw
     }
     ```
     This assumes that the XML file with original text and your translations is in the `assets/Translation.xml` file.
-6. Optionally, add a font or a fixer function with `api.AddLanguageFont` or `api.AddLanguageFixer` underneath the `api.RegisterLanguage` line. Adding a font is optional. A "fixer" function will take in a string and output a string where the characters have been correctly reformatted. This is necessary for certain languages, e.g. right-to-left languages like Arabic or Farsi. Make sure to call all these methods at the same time, starting with `RegisterLanguage`, else they may not work as intended.
+5. Optionally, add a font or a fixer function with `api.AddLanguageFont` or `api.AddLanguageFixer` underneath the `api.RegisterLanguage` line. Adding a font is optional. A "fixer" function will take in a string and output a string where the characters have been correctly reformatted. This is necessary for certain languages, e.g. right-to-left languages like Arabic or Farsi. Make sure to call all these methods at the same time, starting with `RegisterLanguage`, else they may not work as intended.
 
 ## Other info
 
