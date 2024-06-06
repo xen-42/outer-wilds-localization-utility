@@ -6,7 +6,7 @@ Based on [Outer Wilds Korean Translation](https://outerwildsmods.com/mods/outerw
 
 ## Getting started
 
-1. Create a base OWML mod following the [getting started guide.](https://owml.outerwildsmods.com/guides/getting_started.html). 
+1. Create a base OWML mod following the [getting started guide.](https://owml.outerwildsmods.com/guides/getting_started.html). For this example we're calling our mod `DothrakiTranslation` but replace that with whatever language you're working on.
 2. Add a dictionary entry to the end of the `manifest.json` dict that specifies the dependency for Outer Wilds Mod Manager:
     ```json
     "dependencies": [
@@ -30,7 +30,7 @@ Based on [Outer Wilds Korean Translation](https://outerwildsmods.com/mods/outerw
         }
     }
     ```
-4. In your mod code (`DothrakiTranslation.cs`), access the utility mod like so:
+4. In your base `ModBehaviour` class (`DothrakiTranslation.cs` in our case), access the utility mod like so:
     ```cs
     namespace DothrakiTranslation
     {
