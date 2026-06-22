@@ -96,7 +96,7 @@ namespace LocalizationUtility
 
             __instance._deathText.font = LocalizationUtility.Instance.GetLanguage().Font;
 
-            return false;
+            return true;
         }
 
         [HarmonyPrefix]
